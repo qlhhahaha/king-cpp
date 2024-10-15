@@ -1,0 +1,8 @@
+.vs
+.vscode
+*.exe
+*.obj
+Debug/
+x64/
+*.user
+build/

@@ -1,0 +1,6 @@
+message("ClassExampleProject dir")
+
+
+
+
+
