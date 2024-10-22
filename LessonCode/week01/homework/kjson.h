@@ -12,7 +12,7 @@ class KJson {
 public:
 	enum KJsonType {JsonString, JsonNum, JsonBool, JsonNull, JsonJson, JsonArray};
 
-	KJson(KJsonType valueType, KJson* left = nullptr, KJson* right = nullptr, const std::string& keyName = "")
+	KJson(KJsonType valueType = JsonJson, KJson* left = nullptr, KJson* right = nullptr, const std::string& keyName = "")
 		: type(valueType)
 		, prev(left)
 		, next(right)
@@ -39,7 +39,14 @@ public:
 	virtual void setValue(bool val) {}
 	virtual void setValue(int val) {}
 	virtual void setValue(double val) {}
-	
+
+	// 这几个虚函数不写成同名重载形式是因为，无法仅凭返回值不同来重载
+	virtual std::string returnStr() { return ""; }
+	virtual bool returnBool() { return 0; }
+	virtual bool returnNumType() { return 0; }
+	virtual int returnInt() { return 0; }
+	virtual double returnDouble() { return 0; }
+
 private:
 	KJsonType type;
 
@@ -56,9 +63,9 @@ public:
 	KJsonString() : KJson(JsonString) {}
 	~KJsonString() {}
 
-	void setValue(const std::string& str) override {
-		this->stringValue = str;
-	}
+	void setValue(const std::string& str) override { this->stringValue = str; }
+
+	std::string returnStr() override { return this->stringValue; }
 
 private:
 	std::string stringValue;
@@ -68,21 +75,22 @@ private:
 // value为整数或浮点数的数据类型
 class KJsonNum : public KJson {
 public:
-	KJsonNum() : KJson(JsonNum), valueInt(0), valueDouble(0.0) {}
+	KJsonNum() : KJson(JsonNum),numType(true), valueInt(0), valueDouble(0.0) {}
 	~KJsonNum() {}
 
-	void setValue(int val) override {
-		this->valueInt = val;
-	}
+	void setValue(int val) override { this->valueInt = val; }
 
-	void setValue(double val) override {
-		this->valueDouble = val;
-	}
+	void setValue(double val) override { this->valueDouble = val; }
+
+	bool returnNumType() override { return this->numType; }
+	int returnInt() override { return this->valueInt; }
+	double returnDouble() override { return this->valueDouble; }
+
 
 private:
+	bool numType;  // true代表整数，false浮点数
 	int valueInt;
 	double valueDouble;
-
 };
 
 
@@ -92,10 +100,9 @@ public:
 	KJsonBool() : KJson(JsonBool), boolValue(true) {}
 	~KJsonBool() {}
 
+	void setValue(bool val) override { this->boolValue = val; }
 
-	void setValue(bool val) override {
-		this->boolValue = val;
-	}
+	bool returnBool() override { return this->boolValue; }
 
 private:
 	bool boolValue;
@@ -176,5 +183,13 @@ KJson* parseValue(std::stringstream& srcStream);
 
 // 释放整个Json结构的内存
 void freeJson(KJson* ptrJson);
+
+// 用于重载<<，打印json结构
+std::ostream& printString(std::ostream& os, KJson* srcJson);
+std::ostream& printNum(std::ostream& os, KJson* srcJson);
+std::ostream& printBool(std::ostream& os, KJson* srcJson);
+std::ostream& printNull(std::ostream& os, KJson* srcJson);
+std::ostream& printJson(std::ostream& os, KJson* srcJson);
+std::ostream& printArray(std::ostream& os, KJson* srcJson);
 
 #endif // !KJSON_H

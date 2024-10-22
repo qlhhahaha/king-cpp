@@ -136,9 +136,7 @@ KJson* parserJson(std::stringstream& srcStream) {
 	// 注意，不能用srcStream.ignore(2)一下跳过左大括号和左引号，因为其间大概率有空格和换行
 	removeWhiteSpace(srcStream);
 	srcStream.ignore();  // 跳过左引号
-
 	std::string itemKeyname = getKeyname(srcStream);
-
 	srcStream.ignore();  // 跳过冒号
 
 	KJson* itemChild = parseValue(removeWhiteSpace(srcStream));
@@ -149,6 +147,7 @@ KJson* parserJson(std::stringstream& srcStream) {
 		srcStream.ignore();
 		removeWhiteSpace(srcStream);
 
+		srcStream.ignore();  // 跳过左引号
 		std::string anotherKeyname = getKeyname(srcStream);
 		srcStream.ignore();  // 跳过冒号
 		KJson* anotherChild = parseValue(removeWhiteSpace(srcStream));
@@ -216,6 +215,111 @@ std::shared_ptr<KJson> parserAll(std::string path) {
 }
 
 
-std::ostream& operator << (std::ostream& os, KJson* srcJson) {
+// 记录打印深度
+static int printDepth = 0;
+
+std::ostream& printString(std::ostream& os, KJson* srcJson) {
+	os << '\"' << srcJson->returnStr() << '\"';
 	return os;
+}
+
+
+std::ostream& printNum(std::ostream& os, KJson* srcJson) {
+	if (srcJson->returnNumType())
+		os << srcJson->returnInt();
+	else
+		os << srcJson->returnDouble();
+
+	return os;
+}
+
+
+std::ostream& printBool(std::ostream& os, KJson* srcJson) {
+	os << srcJson->returnBool();
+	return os;
+}
+
+
+std::ostream& printNull(std::ostream& os, KJson* srcJson) {
+	os << "NULL";
+	return os;
+}
+
+
+std::ostream& printJson(std::ostream& os, KJson* srcJson) {
+	printDepth++;
+	for (int i = 0; i < printDepth - 1; i++)
+		os << "  ";
+	os << "{\n";
+	KJson* child = srcJson->returnChild();
+
+	while (child != nullptr) {
+		for (int i = 0; i < printDepth; i++)
+			os << "  ";
+
+		os << '\"' << child->returnKey() << "\": ";
+		os << child;  // 递归重载
+		child = child->returnNext();
+		if (child != nullptr)
+			os << ",";
+		os << '\n';
+	}
+
+	for (int i = 0; i < printDepth - 1; i++)
+		os << "  ";
+
+	printDepth--;
+	os << '}';
+	return os;
+}
+
+
+std::ostream& printArray(std::ostream& os, KJson* srcJson) {
+	os << "[\n";
+	KJson* child = srcJson->returnChild();
+	while (child != nullptr) {
+		os << child;
+		child = child->returnNext();
+		if (child != nullptr)
+			os << ", \n";
+	}
+	os << "]\n";
+
+	return os;
+}
+
+
+std::ostream& operator << (std::ostream& os, KJson* srcJson) {
+	switch (srcJson->returnType())
+	{
+	case KJson::JsonString:
+		return printString(os, srcJson);
+		break;
+
+	case KJson::JsonNum:
+		return printNum(os, srcJson);
+		break;
+
+	case KJson::JsonBool:		
+		return printBool(os, srcJson);
+		break;
+
+	case KJson::JsonNull:
+		return printNull(os, srcJson);
+		break;
+
+	case KJson::JsonJson:
+		return printJson(os, srcJson);
+		break;
+
+	case KJson::JsonArray:
+		return printArray(os, srcJson);
+		break;
+
+	default:
+		return os;
+		break;
+	}
+
+
 }
