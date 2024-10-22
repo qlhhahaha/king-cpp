@@ -3,7 +3,8 @@
 
 int main()
 {
-	parserAll("tests/test3.json");
+	std::locale::global(std::locale("zh_CN.UTF-8"));
+	parserAll("tests/test2.json");
 
 	return 0;
 }

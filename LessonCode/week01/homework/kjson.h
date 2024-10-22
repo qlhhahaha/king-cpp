@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <memory>
+#include <locale>
 
 
 /********************* JSONΩ‚Œˆ¿‡ ************************/
