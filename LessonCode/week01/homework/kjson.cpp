@@ -207,10 +207,8 @@ std::shared_ptr<KJson> parserAll(std::string path) {
 		//TODO 抛异常
 	}
 
-	//TODO 解析完后的释放内存和返回指针 
 	// 自定义删除器，ptrJson被销毁时自动调用freeJson
 	std::shared_ptr<KJson> ptrJson(parserResult, freeJson);
-	std::cout << ptrJson.get() << std::endl;
 	return ptrJson;
 }
 
@@ -249,13 +247,13 @@ std::ostream& printNull(std::ostream& os, KJson* srcJson) {
 std::ostream& printJson(std::ostream& os, KJson* srcJson) {
 	printDepth++;
 	for (int i = 0; i < printDepth - 1; i++)
-		os << "  ";
+		os << "   ";
 	os << "{\n";
 	KJson* child = srcJson->returnChild();
 
 	while (child != nullptr) {
 		for (int i = 0; i < printDepth; i++)
-			os << "  ";
+			os << "   ";
 
 		os << '\"' << child->returnKey() << "\": ";
 		os << child;  // 递归重载
@@ -266,7 +264,7 @@ std::ostream& printJson(std::ostream& os, KJson* srcJson) {
 	}
 
 	for (int i = 0; i < printDepth - 1; i++)
-		os << "  ";
+		os << "   ";
 
 	printDepth--;
 	os << '}';
@@ -320,6 +318,5 @@ std::ostream& operator << (std::ostream& os, KJson* srcJson) {
 		return os;
 		break;
 	}
-
 
 }

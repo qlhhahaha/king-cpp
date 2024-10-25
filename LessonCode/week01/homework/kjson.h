@@ -6,6 +6,7 @@
 #include <fstream>
 #include <memory>
 #include <locale>
+#include <vector>
 
 
 /********************* JSON解析类 ************************/
@@ -36,7 +37,7 @@ public:
 	// 具体实现见各派生类中的override版本
 	// 之所以在此处用虚函数声明，是为了能统一用基类指针管理派生类
 	// 注意，不要用纯虚函数，因为不是每一个派生类都需要这个方法
-	virtual void setValue(const std::string& str) {}
+	virtual void setValue(std::string str) {}
 	virtual void setValue(bool val) {}
 	virtual void setValue(int val) {}
 	virtual void setValue(double val) {}
@@ -47,6 +48,13 @@ public:
 	virtual bool returnNumType() { return 0; }
 	virtual int returnInt() { return 0; }
 	virtual double returnDouble() { return 0; }
+
+	
+	// 实现动态key-value管理
+	virtual KJson* operator [] (std::string keyName) { return nullptr; }
+	virtual KJson* operator [] (int index) { return nullptr; }
+	virtual KJson* pushBack(KJson* newItem) { return nullptr; }
+	virtual void remove(int index) {}
 
 private:
 	KJsonType type;
@@ -64,7 +72,7 @@ public:
 	KJsonString() : KJson(JsonString) {}
 	~KJsonString() {}
 
-	void setValue(const std::string& str) override { this->stringValue = str; }
+	void setValue(std::string str) override { this->stringValue = str; }
 
 	std::string returnStr() override { return this->stringValue; }
 
@@ -126,7 +134,31 @@ public:
 	KJsonJson() : KJson(JsonJson) {}
 	~KJsonJson() {}
 
-private:
+	KJson* operator [] (std::string keyName) override {
+		KJson* child = this->returnChild();
+		while (keyName != child->returnKey() && child != nullptr)
+			child = child->returnNext();
+		if (child == nullptr) {
+			//TODO 抛异常
+		}
+			
+		return child; 
+	}
+
+	KJson* pushBack(KJson* newItem) override {
+		KJson* child = this->returnChild();
+		newItem->setKey(child->returnKey());
+
+		while (child->returnNext() != nullptr)
+			child = child->returnNext();
+
+		child->setNext(newItem);
+		newItem->setPrev(child);
+		newItem->setNext(nullptr);
+
+		return child;
+	}
+
 };
 
 
@@ -136,7 +168,63 @@ public:
 	KJsonArray() : KJson(JsonArray) {}
 	~KJsonArray() {}
 
-private:
+	KJson* operator [] (int index) override {
+		KJson* child = this->returnChild();
+		while (index && child != nullptr) {
+			child = child->returnNext();
+			index--;
+		}
+		if (child == nullptr) {
+			//TODO 抛异常
+		}
+		return child;
+	}
+
+	KJson* pushBack(KJson* newItem) override {
+		KJson* child = this->returnChild();
+		newItem->setKey(child->returnKey());
+
+		while (child->returnNext() != nullptr)
+			child = child->returnNext();
+
+		child->setNext(newItem);
+		newItem->setPrev(child);
+		newItem->setNext(nullptr);
+
+		return child;
+	}
+
+	// 双向链表的删除
+	void remove(int index) override {
+		KJson* removeItem = (*this)[index];
+		KJson* nextItem = removeItem->returnNext();
+		KJson* prevItem = removeItem->returnPrev();
+
+		// 删除首元素
+		if (index == 0) {
+			this->setChild(nextItem);
+			if (nextItem != nullptr)
+				nextItem->setPrev(nullptr);
+
+			removeItem->setNext(nullptr);
+			delete removeItem;
+			return;
+		}
+
+		// 删除非首元素
+		prevItem->setNext(nextItem);
+		if (nextItem != nullptr)
+			nextItem->setPrev(prevItem);
+
+		removeItem->setNext(nullptr);
+		removeItem->setPrev(nullptr);
+		delete removeItem;
+		return;
+
+
+	}
+
+
 };
 
 
@@ -147,6 +235,10 @@ std::shared_ptr<KJson> parserAll(std::string path);
 
 // 重载<<用于打印json结构
 std::ostream& operator << (std::ostream& os, KJson* srcJson);
+
+// 控制台交互
+void interact();
+
 
 /********************* 内部utils接口 ************************/
 
