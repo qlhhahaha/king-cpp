@@ -7,6 +7,8 @@
 #include <memory>
 #include <locale>
 #include <vector>
+#include <string>
+#include <regex>
 
 
 /********************* JSON解析类 ************************/
@@ -55,6 +57,7 @@ public:
 	virtual KJson* operator [] (int index) { return nullptr; }
 	virtual KJson* pushBack(KJson* newItem) { return nullptr; }
 	virtual void remove(int index) {}
+	virtual void remove(std::string keyName) {}
 
 private:
 	KJsonType type;
@@ -147,7 +150,6 @@ public:
 
 	KJson* pushBack(KJson* newItem) override {
 		KJson* child = this->returnChild();
-		newItem->setKey(child->returnKey());
 
 		while (child->returnNext() != nullptr)
 			child = child->returnNext();
@@ -157,6 +159,33 @@ public:
 		newItem->setNext(nullptr);
 
 		return child;
+	}
+
+	void remove(std::string keyName) override {
+		KJson* removeItem = (*this)[keyName];
+		KJson* nextItem = removeItem->returnNext();
+		KJson* prevItem = removeItem->returnPrev();
+
+		// 删除首元素
+		if (this->returnChild() == removeItem) {
+			this->setChild(nextItem);
+			if (nextItem != nullptr)
+				nextItem->setPrev(nullptr);
+
+			removeItem->setNext(nullptr);
+			delete removeItem;
+			return;
+		}
+
+		// 删除非首元素
+		prevItem->setNext(nextItem);
+		if (nextItem != nullptr)
+			nextItem->setPrev(prevItem);
+
+		removeItem->setNext(nullptr);
+		removeItem->setPrev(nullptr);
+		delete removeItem;
+		return;
 	}
 
 };
@@ -182,7 +211,6 @@ public:
 
 	KJson* pushBack(KJson* newItem) override {
 		KJson* child = this->returnChild();
-		newItem->setKey(child->returnKey());
 
 		while (child->returnNext() != nullptr)
 			child = child->returnNext();
@@ -220,11 +248,7 @@ public:
 		removeItem->setPrev(nullptr);
 		delete removeItem;
 		return;
-
-
 	}
-
-
 };
 
 
