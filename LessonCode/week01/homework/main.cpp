@@ -52,6 +52,8 @@ void dynamicTest() {
 
 
 void interact() {
+	// TODO 异常输入防御性检查
+
 	std::shared_ptr<KJson>ptrJson = parserAll("tests/test1.json");
 	std::wcout << L"打印整个json：" << std::endl;
 	std::cout << ptrJson << std::endl << std::endl;
@@ -61,7 +63,9 @@ void interact() {
 		std::wcout << L"1、解析json" << std::endl;
 		std::wcout << L"2、插入item" << std::endl;
 		std::wcout << L"3、删除item" << std::endl;
-		std::wcout << L"4、退出" << std::endl;
+		std::wcout << L"4、输出到output.json" << std::endl;
+		std::wcout << L"5、输出到output.xml" << std::endl;
+		std::wcout << L"6、退出" << std::endl;
 
 		int funNum = 1;
 		std::cin >> funNum;
@@ -150,7 +154,7 @@ void interact() {
 				}
 			}
 			std::cout << nest.back() << std::endl;
-			std::wcout << L"再键入index或keyname，程序将删除对应的value" << std::endl;
+			std::wcout << L"再键入index或keyname(空格隔开)，程序将删除对应的value" << std::endl;
 			std::cin >> inputStr;
 			if (isAllDigits(inputStr)) {
 				int indexNum = std::stoi(inputStr);
@@ -166,15 +170,36 @@ void interact() {
 		}
 
 		else if (funNum == 4) {
+			std::wcout << L"打印现在的json" << std::endl;
+			std::cout << ptrJson << std::endl << std::endl;
+			std::wcout << L"将其输出到output.json文件" << std::endl;
+
+			std::ofstream outputJson("tests/output.json", 
+				std::ios::out | std::ios::trunc);
+
+			if (!outputJson.is_open()) {
+				std::cerr << "fail to open output.json" << std::endl;
+				return;
+			}
+
+			outputJson << ptrJson;
+			outputJson.close();
+			std::wcout << L"输出成功！" << std::endl << std::endl;
+		}
+
+		else if (funNum == 5) {
+
+		}
+
+		else if (funNum == 6) {
 			return;
 		}
+
 		else {
 			std::wcout << L"输入错误，退出" << std::endl;
 			return;
 		}
 	}
-
-
 
 
 }
