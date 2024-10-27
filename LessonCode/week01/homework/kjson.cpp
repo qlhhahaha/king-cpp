@@ -320,3 +320,116 @@ std::ostream& operator << (std::ostream& os, KJson* srcJson) {
 	}
 
 }
+
+
+void outputXml(std::shared_ptr<KJson>& ptrJson, const std::string& filename) {
+	std::ofstream xmlFile(filename, std::ios::out | std::ios::trunc);
+	if (xmlFile.is_open()) {
+		xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+		xmlFile << "<root>\n";
+		xmlFile << json2Xml(ptrJson.get());
+		xmlFile << "</root>\n";
+		xmlFile.close();
+	}
+	else {
+		std::cerr << "Unable to open file for writing XML." << std::endl;
+	}
+}
+
+
+std::string json2Xml(KJson* json) {
+	std::ostringstream xml;
+
+	switch (json->returnType()) {
+	case KJson::JsonString:
+		xml << "<" << json->returnKey() << ">"
+			<< escapeXml(json->returnStr())
+			<< "</" << json->returnKey() << ">";
+		break;
+	case KJson::JsonNum: {
+		if (json->returnNumType()) {
+			xml << "<" << json->returnKey() << ">"
+				<< json->returnInt()
+				<< "</" << json->returnKey() << ">";
+		}
+		else {
+			xml << "<" << json->returnKey() << ">"
+				<< json->returnDouble()
+				<< "</" << json->returnKey() << ">";
+		}
+		break;
+	}
+	case KJson::JsonBool:
+		xml << "<" << json->returnKey() << ">"
+			<< (json->returnBool() ? "true" : "false")
+			<< "</" << json->returnKey() << ">";
+		break;
+	case KJson::JsonNull:
+		xml << "<" << json->returnKey() << ">"
+			<< "null"
+			<< "</" << json->returnKey() << ">";
+		break;
+	case KJson::JsonJson: {
+		xml << "<" << json->returnKey() << ">\n";
+		KJson* child = json->returnChild();
+		while (child != nullptr) {
+			xml << "  " << json2Xml(child);
+			child = child->returnNext();
+		}
+		xml << "</" << json->returnKey() << ">";
+		break;
+	}
+	case KJson::JsonArray: {
+		xml << "<" << json->returnKey() << ">\n";
+		KJson* child = json->returnChild();
+		while (child != nullptr) {
+			xml << "  " << json2Xml(child);
+			child = child->returnNext();
+		}
+		xml << "</" << json->returnKey() << ">";
+		break;
+	}
+	default:
+		// 处理未知类型
+		break;
+	}
+
+	// Add a newline after each element for better readability
+	xml << "\n";
+
+	return xml.str();
+}
+
+
+std::string escapeXml(std::string& str) {
+	std::string escaped;
+	for (char c : str) {
+		switch (c) {
+		case '&':  escaped += "&amp;";   break;
+		case '\"': escaped += "&quot;";  break;
+		case '\'': escaped += "&apos;";  break;
+		case '<':  escaped += "&lt;";    break;
+		case '>':  escaped += "&gt;";    break;
+		default:   escaped += c;         break;
+		}
+	}
+	return escaped;
+}
+
+
+bool isAllDigits(const std::string& str) {
+	std::regex pattern("^\\d+$"); // 定义正则表达式模式
+	return std::regex_match(str, pattern); // 检查整个字符串是否匹配模式
+}
+
+
+std::vector<std::string> split(const std::string& str, char delimiter) {
+	std::vector<std::string> tokens;
+	std::string token;
+	std::istringstream tokenStream(str);
+
+	while (std::getline(tokenStream, token, delimiter))
+		tokens.push_back(token);
+
+	return tokens;
+}

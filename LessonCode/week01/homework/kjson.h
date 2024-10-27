@@ -263,6 +263,8 @@ std::ostream& operator << (std::ostream& os, KJson* srcJson);
 // 控制台交互
 void interact();
 
+// 将json输出为xml文件
+void outputXml(std::shared_ptr<KJson>& ptrJson, const std::string& filename = "tests/output.xml");
 
 /********************* 内部utils接口 ************************/
 
@@ -308,5 +310,17 @@ std::ostream& printBool(std::ostream& os, KJson* srcJson);
 std::ostream& printNull(std::ostream& os, KJson* srcJson);
 std::ostream& printJson(std::ostream& os, KJson* srcJson);
 std::ostream& printArray(std::ostream& os, KJson* srcJson);
+
+// json结构转为xml结构
+std::string json2Xml(KJson* json);
+
+// 用于转义 XML 中的特殊字符
+std::string escapeXml(std::string& str);
+
+// 判断str是否为全数字
+bool isAllDigits(const std::string& str);
+
+// 分割string
+std::vector<std::string> split(const std::string& str, char delimiter);
 
 #endif // !KJSON_H

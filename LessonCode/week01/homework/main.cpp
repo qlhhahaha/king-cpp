@@ -1,23 +1,5 @@
 ﻿#include "kjson.h"
 
-std::vector<std::string> split(const std::string& str, char delimiter) {
-	std::vector<std::string> tokens;
-	std::string token;
-	std::istringstream tokenStream(str);
-
-	while (std::getline(tokenStream, token, delimiter)) {
-		tokens.push_back(token);
-	}
-
-	return tokens;
-}
-
-
-bool isAllDigits(const std::string& str) {
-	std::regex pattern("^\\d+$"); // 定义正则表达式模式
-	return std::regex_match(str, pattern); // 检查整个字符串是否匹配模式
-}
-
 
 void dynamicTest() {
 	std::shared_ptr<KJson> ptrJson = parserAll("tests/test4.json");
@@ -36,7 +18,6 @@ void dynamicTest() {
 
 	//std::cout << (*(*nest)[0])[0] << std::endl;
 
-
 	std::wcout << L"在website尾部插入一个string：" << std::endl;
 	KJson* newItem = new KJsonString;
 	std::string str = "an inserted new string";
@@ -47,7 +28,6 @@ void dynamicTest() {
 	std::wcout << L"删除尾部元素：" << std::endl;
 	nest->remove(1);
 	std::cout << nest << std::endl;
-
 }
 
 
@@ -83,7 +63,6 @@ void interact() {
 					break;
 
 				std::vector<std::string> words = split(inputStr, ' ');
-
 				std::vector<KJson*> nest(words.size(), nullptr);
 				nest[0] = (*ptrJson)[words[0]];
 				for (int i = 1; i < nest.size(); i++) {
@@ -107,7 +86,6 @@ void interact() {
 			std::getline(std::cin, inputStr);
 
 			std::vector<std::string> words = split(inputStr, ' ');
-
 			std::vector<KJson*> nest(words.size(), nullptr);
 			nest[0] = (*ptrJson)[words[0]];
 			for (int i = 1; i < nest.size(); i++) {
@@ -141,7 +119,6 @@ void interact() {
 			std::getline(std::cin, inputStr);
 
 			std::vector<std::string> words = split(inputStr, ' ');
-
 			std::vector<KJson*> nest(words.size(), nullptr);
 			nest[0] = (*ptrJson)[words[0]];
 			for (int i = 1; i < nest.size(); i++) {
@@ -188,7 +165,8 @@ void interact() {
 		}
 
 		else if (funNum == 5) {
-
+			outputXml(ptrJson);
+			std::wcout << L"已成功转化为xml序列化格式，并输出到tests/output.xml中！" << std::endl << std::endl;
 		}
 
 		else if (funNum == 6) {
@@ -201,15 +179,14 @@ void interact() {
 		}
 	}
 
-
 }
+
+
 
 int main()
 {
 	std::locale::global(std::locale("zh_CN.UTF-8"));
-	//parserAll("tests/test4.json");
 	//dynamicTest();
-
 	interact();
 
 	return 0;
