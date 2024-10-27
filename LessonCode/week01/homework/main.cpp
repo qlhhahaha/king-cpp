@@ -34,7 +34,7 @@ void dynamicTest() {
 void interact() {
 	// TODO 异常输入防御性检查
 
-	std::shared_ptr<KJson>ptrJson = parserAll("tests/test1.json");
+	std::shared_ptr<KJson>ptrJson = parserAll("tests/test4.json");
 	std::wcout << L"打印整个json：" << std::endl;
 	std::cout << ptrJson << std::endl << std::endl;
 	

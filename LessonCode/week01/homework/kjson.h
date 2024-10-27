@@ -11,10 +11,12 @@
 #include <regex>
 
 
+
 /********************* JSON解析类 ************************/
 class KJson {
 public:
-	enum KJsonType {JsonString, JsonNum, JsonBool, JsonNull, JsonJson, JsonArray};
+	enum KJsonType {JsonString, JsonNum, JsonBool, JsonNull, JsonJson, JsonArray, JsonError};
+	enum errorType { wrongText, wrongAllocate, wrongKeyname, wrongIndex};
 
 	KJson(KJsonType valueType = JsonJson, KJson* left = nullptr, KJson* right = nullptr, const std::string& keyName = "")
 		: type(valueType)
@@ -59,6 +61,9 @@ public:
 	virtual void remove(int index) {}
 	virtual void remove(std::string keyName) {}
 
+	// 异常处理
+	virtual void throwException(errorType type) {}
+
 private:
 	KJsonType type;
 
@@ -67,6 +72,12 @@ private:
 
 	std::string key;
 };
+
+
+// 注意，该全局变量的定义位置不能变
+// 若放在头文件开头则会Kjson类型未定义
+// 放在结尾又会导致ptrError变量无法使用
+extern KJson* ptrError;
 
 
 // value为字符串的数据类型
@@ -107,7 +118,7 @@ private:
 
 
 // value为布尔值的数据类型
-class KJsonBool: public KJson {
+class KJsonBool : public KJson {
 public:
 	KJsonBool() : KJson(JsonBool), boolValue(true) {}
 	~KJsonBool() {}
@@ -122,17 +133,16 @@ private:
 
 
 // value为null的数据类型
-class KJsonNull: public KJson {
+class KJsonNull : public KJson {
 public:
 	KJsonNull() : KJson(JsonNull) {}
 	~KJsonNull() {}
 
-private:
 };
 
 
 // value为Json对象的数据类型
-class KJsonJson: public KJson {
+class KJsonJson : public KJson {
 public:
 	KJsonJson() : KJson(JsonJson) {}
 	~KJsonJson() {}
@@ -142,10 +152,11 @@ public:
 		while (keyName != child->returnKey() && child != nullptr)
 			child = child->returnNext();
 		if (child == nullptr) {
-			//TODO 抛异常
+			ptrError->throwException(wrongKeyname);
+			return ptrError;
 		}
-			
-		return child; 
+
+		return child;
 	}
 
 	KJson* pushBack(KJson* newItem) override {
@@ -204,7 +215,8 @@ public:
 			index--;
 		}
 		if (child == nullptr) {
-			//TODO 抛异常
+			ptrError->throwException(wrongIndex);
+			return ptrError;
 		}
 		return child;
 	}
@@ -249,6 +261,32 @@ public:
 		delete removeItem;
 		return;
 	}
+};
+
+
+class KJsonError : public KJson {
+public:
+
+	KJsonError() : KJson(JsonError) {};
+	~KJsonError();
+		
+	void throwException(errorType type) override {
+		switch (type) {
+		case KJsonError::wrongText: this->exception = "throw an exception of \"wrong json text\"";
+
+		case KJsonError::wrongAllocate: this->exception = "throw an exception of \"allocate failed\"";
+
+		case KJsonError::wrongKeyname: this->exception = "throw an exception of \"the keyname does not exist\"";
+
+		case KJsonError::wrongIndex: this->exception = "throw an exception of \"the index is out of range\"";
+		}
+
+
+	}
+
+private:
+	std::string exception;
+
 };
 
 
@@ -322,5 +360,11 @@ bool isAllDigits(const std::string& str);
 
 // 分割string
 std::vector<std::string> split(const std::string& str, char delimiter);
+
+// 对错误的json文本抛出异常
+KJson* wrongText(std::stringstream& srcStream);
+KJson* wrongAllocate();
+
+
 
 #endif // !KJSON_H

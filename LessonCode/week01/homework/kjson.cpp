@@ -1,5 +1,8 @@
 #include "kjson.h"
 
+// 全局异常
+KJson* ptrError = new KJsonError;
+
 std::string getKeyname(std::stringstream& srcStream) {
 	std::string keyName;
 	getline(srcStream, keyName, '\"');
@@ -44,14 +47,14 @@ KJson* parseValue(std::stringstream& srcStream) {
 	else if (nextChar == '[')
 		return parserArray(srcStream);
 	else {
-		// TODO 抛异常
+		return wrongText(srcStream);
 	}
 }
 
 KJson* parserString(std::stringstream& srcStream) {
 	KJson* itemString = new KJsonString;
 	if (itemString == nullptr) {
-		// TODO 抛异常
+		return wrongAllocate();
 	}
 
 	std::string stringValue;
@@ -66,7 +69,7 @@ KJson* parserString(std::stringstream& srcStream) {
 KJson* parserNum(std::stringstream& srcStream) {
 	KJson* itemNum = new KJsonNum;
 	if (itemNum == nullptr) {
-		//TODO 抛异常
+		wrongAllocate();
 	}
 
 	char nextChar = srcStream.peek();
@@ -93,7 +96,7 @@ KJson* parserNum(std::stringstream& srcStream) {
 KJson* parserBool(std::stringstream& srcStream) {
 	KJson* itemBool = new KJsonBool;
 	if (itemBool == nullptr) {
-		//TODO 抛异常
+		wrongAllocate();
 	}
 
 	char nextChar = srcStream.peek();
@@ -113,7 +116,7 @@ KJson* parserBool(std::stringstream& srcStream) {
 KJson* parserNull(std::stringstream& srcStream) {
 	KJson* itemNull = new KJsonNull;
 	if (itemNull == nullptr) {
-		//TODO 抛异常
+		wrongAllocate();
 	}
 
 	srcStream.ignore(4);  
@@ -125,11 +128,11 @@ KJson* parserNull(std::stringstream& srcStream) {
 KJson* parserJson(std::stringstream& srcStream) {
 	KJson* itemJson = new KJsonJson;
 	if (itemJson == nullptr) {
-		// TODO 抛异常
+		wrongAllocate();
 	}
 
 	if (srcStream.peek() != '{') {
-		// TODO 抛异常
+		wrongText(srcStream);
 	}
 	srcStream.ignore();  // 跳过左大括号
 
@@ -166,7 +169,7 @@ KJson* parserJson(std::stringstream& srcStream) {
 KJson* parserArray(std::stringstream& srcStream) {
 	KJson* itemArray = new KJsonArray;
 	if (itemArray == nullptr) {
-		//TODO 抛异常
+		wrongAllocate();
 	}
 
 	srcStream.ignore();  // 跳过左边的中括号
@@ -193,18 +196,20 @@ std::shared_ptr<KJson> parserAll(std::string path) {
 	std::stringstream jsonStream;
 	std::ifstream fin(path);
 
-	//TODO 文件打开异常处理
 	if (!fin.is_open()) {
-		
+		std::cerr << "fail to open " << path << std::endl;
+		return nullptr;
 	}
 	jsonStream << fin.rdbuf();
 	fin.close();
 
 	KJson* parserResult = parserJson(removeWhiteSpace(jsonStream));
 
+	jsonStream.ignore();
+
 	// 若json的结尾反括号}后还有其它非空白字符
 	if (removeWhiteSpace(jsonStream).peek() != -1) {
-		//TODO 抛异常
+		wrongText(removeWhiteSpace(jsonStream));
 	}
 
 	// 自定义删除器，ptrJson被销毁时自动调用freeJson
@@ -346,6 +351,7 @@ std::string json2Xml(KJson* json) {
 			<< escapeXml(json->returnStr())
 			<< "</" << json->returnKey() << ">";
 		break;
+
 	case KJson::JsonNum: {
 		if (json->returnNumType()) {
 			xml << "<" << json->returnKey() << ">"
@@ -359,16 +365,19 @@ std::string json2Xml(KJson* json) {
 		}
 		break;
 	}
+
 	case KJson::JsonBool:
 		xml << "<" << json->returnKey() << ">"
 			<< (json->returnBool() ? "true" : "false")
 			<< "</" << json->returnKey() << ">";
 		break;
+
 	case KJson::JsonNull:
 		xml << "<" << json->returnKey() << ">"
 			<< "null"
 			<< "</" << json->returnKey() << ">";
 		break;
+
 	case KJson::JsonJson: {
 		xml << "<" << json->returnKey() << ">\n";
 		KJson* child = json->returnChild();
@@ -379,6 +388,7 @@ std::string json2Xml(KJson* json) {
 		xml << "</" << json->returnKey() << ">";
 		break;
 	}
+
 	case KJson::JsonArray: {
 		xml << "<" << json->returnKey() << ">\n";
 		KJson* child = json->returnChild();
@@ -389,12 +399,11 @@ std::string json2Xml(KJson* json) {
 		xml << "</" << json->returnKey() << ">";
 		break;
 	}
+
 	default:
-		// 处理未知类型
 		break;
 	}
 
-	// Add a newline after each element for better readability
 	xml << "\n";
 
 	return xml.str();
@@ -432,4 +441,20 @@ std::vector<std::string> split(const std::string& str, char delimiter) {
 		tokens.push_back(token);
 
 	return tokens;
+}
+
+
+KJson* wrongText(std::stringstream& srcStream) { 
+	ptrError->throwException(KJsonError::wrongText); 
+	std::string failPos;
+	getline(srcStream, failPos);
+	std::wcout << L"出错的文本位置如下：" << std::endl;
+	std::cout << failPos << std::endl;
+	return ptrError;
+}
+
+
+KJson* wrongAllocate() {
+	ptrError->throwException(KJsonError::wrongAllocate); 
+	return ptrError;
 }
