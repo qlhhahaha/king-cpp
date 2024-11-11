@@ -37,7 +37,7 @@ void interact() {
 	std::shared_ptr<KJson>ptrJson = parserAll("tests/test4.json");
 	std::wcout << L"打印整个json：" << std::endl;
 	std::cout << ptrJson << std::endl << std::endl;
-	
+
 	while (1) {
 		std::wcout << L"键入数字来选择功能：" << std::endl;
 		std::wcout << L"1、解析json" << std::endl;
@@ -101,7 +101,7 @@ void interact() {
 
 			std::wcout << L"再键入key和value，程序将其添加到尾部" << std::endl;
 			std::getline(std::cin, inputStr);
-			std::vector<std::string> insertWords= split(inputStr, ' ');
+			std::vector<std::string> insertWords = split(inputStr, ' ');
 
 			KJson* newItem = new KJsonString;
 			newItem->setKey(insertWords[0]);
@@ -114,7 +114,7 @@ void interact() {
 
 		else if (funNum == 3) {
 			std::wcout << L"先通过键入key来选择到某一个item" << std::endl;
-			
+
 			std::string inputStr;
 			std::getline(std::cin, inputStr);
 
@@ -151,7 +151,7 @@ void interact() {
 			std::cout << ptrJson << std::endl << std::endl;
 			std::wcout << L"将其输出到output.json文件" << std::endl;
 
-			std::ofstream outputJson("tests/output.json", 
+			std::ofstream outputJson("tests/output.json",
 				std::ios::out | std::ios::trunc);
 
 			if (!outputJson.is_open()) {

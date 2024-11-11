@@ -1,6 +1,6 @@
-#include "kjson.h"
+ï»¿#include "kjson.h"
 
-// È«¾ÖÒì³£
+// å…¨å±€å¼‚å¸¸
 KJson* ptrError = new KJsonError;
 
 std::string getKeyname(std::stringstream& srcStream) {
@@ -19,7 +19,7 @@ std::stringstream& removeWhiteSpace(std::stringstream& srcStream) {
 
 
 void freeJson(KJson* ptrJson) {
-	while (ptrJson) {  // ÏÈÉ¾ĞÖµÜ£¬ÔÙÉ¾º¢×Ó
+	while (ptrJson) {  // å…ˆåˆ å…„å¼Ÿï¼Œå†åˆ å­©å­
 		KJson* ptrChild = ptrJson->returnChild();
 		if (ptrChild != nullptr)
 			freeJson(ptrChild);
@@ -58,7 +58,7 @@ KJson* parserString(std::stringstream& srcStream) {
 	}
 
 	std::string stringValue;
-	srcStream.ignore();  // Ìø¹ı×óÒıºÅ
+	srcStream.ignore();  // è·³è¿‡å·¦å¼•å·
 	getline(srcStream, stringValue, '\"');
 	itemString->setValue(stringValue);
 	return itemString;
@@ -78,7 +78,7 @@ KJson* parserNum(std::stringstream& srcStream) {
 
 	while (nextChar == '-' || nextChar == '.' || isdigit(nextChar)) {
 		if (nextChar == '.')
-			numType = false;  // false´ú±í¸¡µãÊı
+			numType = false;  // falseä»£è¡¨æµ®ç‚¹æ•°
 
 		numStr.push_back(srcStream.get());
 		nextChar = srcStream.peek();
@@ -119,7 +119,7 @@ KJson* parserNull(std::stringstream& srcStream) {
 		wrongAllocate();
 	}
 
-	srcStream.ignore(4);  
+	srcStream.ignore(4);
 
 	return itemNull;
 }
@@ -134,13 +134,13 @@ KJson* parserJson(std::stringstream& srcStream) {
 	if (srcStream.peek() != '{') {
 		wrongText(srcStream);
 	}
-	srcStream.ignore();  // Ìø¹ı×ó´óÀ¨ºÅ
+	srcStream.ignore();  // è·³è¿‡å·¦å¤§æ‹¬å·
 
-	// ×¢Òâ£¬²»ÄÜÓÃsrcStream.ignore(2)Ò»ÏÂÌø¹ı×ó´óÀ¨ºÅºÍ×óÒıºÅ£¬ÒòÎªÆä¼ä´ó¸ÅÂÊÓĞ¿Õ¸ñºÍ»»ĞĞ
+	// æ³¨æ„ï¼Œä¸èƒ½ç”¨srcStream.ignore(2)ä¸€ä¸‹è·³è¿‡å·¦å¤§æ‹¬å·å’Œå·¦å¼•å·ï¼Œå› ä¸ºå…¶é—´å¤§æ¦‚ç‡æœ‰ç©ºæ ¼å’Œæ¢è¡Œ
 	removeWhiteSpace(srcStream);
-	srcStream.ignore();  // Ìø¹ı×óÒıºÅ
+	srcStream.ignore();  // è·³è¿‡å·¦å¼•å·
 	std::string itemKeyname = getKeyname(srcStream);
-	srcStream.ignore();  // Ìø¹ıÃ°ºÅ
+	srcStream.ignore();  // è·³è¿‡å†’å·
 
 	KJson* itemChild = parseValue(removeWhiteSpace(srcStream));
 	itemChild->setKey(itemKeyname);
@@ -150,9 +150,9 @@ KJson* parserJson(std::stringstream& srcStream) {
 		srcStream.ignore();
 		removeWhiteSpace(srcStream);
 
-		srcStream.ignore();  // Ìø¹ı×óÒıºÅ
+		srcStream.ignore();  // è·³è¿‡å·¦å¼•å·
 		std::string anotherKeyname = getKeyname(srcStream);
-		srcStream.ignore();  // Ìø¹ıÃ°ºÅ
+		srcStream.ignore();  // è·³è¿‡å†’å·
 		KJson* anotherChild = parseValue(removeWhiteSpace(srcStream));
 
 		anotherChild->setKey(anotherKeyname);
@@ -162,7 +162,7 @@ KJson* parserJson(std::stringstream& srcStream) {
 		removeWhiteSpace(srcStream);
 	}
 
-	srcStream.ignore();  // Ìø¹ıÓÒ´óÀ¨ºÅ
+	srcStream.ignore();  // è·³è¿‡å³å¤§æ‹¬å·
 	return itemJson;
 }
 
@@ -172,7 +172,7 @@ KJson* parserArray(std::stringstream& srcStream) {
 		wrongAllocate();
 	}
 
-	srcStream.ignore();  // Ìø¹ı×ó±ßµÄÖĞÀ¨ºÅ
+	srcStream.ignore();  // è·³è¿‡å·¦è¾¹çš„ä¸­æ‹¬å·
 
 	KJson* itemChild = parseValue(removeWhiteSpace(srcStream));
 	itemArray->setChild(itemChild);
@@ -187,7 +187,7 @@ KJson* parserArray(std::stringstream& srcStream) {
 		removeWhiteSpace(srcStream);
 	}
 
-	srcStream.ignore();  // Ìø¹ıÓÒ±ßµÄÖĞÀ¨ºÅ
+	srcStream.ignore();  // è·³è¿‡å³è¾¹çš„ä¸­æ‹¬å·
 	return itemArray;
 }
 
@@ -207,18 +207,18 @@ std::shared_ptr<KJson> parserAll(std::string path) {
 
 	jsonStream.ignore();
 
-	// ÈôjsonµÄ½áÎ²·´À¨ºÅ}ºó»¹ÓĞÆäËü·Ç¿Õ°××Ö·û
+	// è‹¥jsonçš„ç»“å°¾åæ‹¬å·}åè¿˜æœ‰å…¶å®ƒéç©ºç™½å­—ç¬¦
 	if (removeWhiteSpace(jsonStream).peek() != -1) {
 		wrongText(removeWhiteSpace(jsonStream));
 	}
 
-	// ×Ô¶¨ÒåÉ¾³ıÆ÷£¬ptrJson±»Ïú»ÙÊ±×Ô¶¯µ÷ÓÃfreeJson
+	// è‡ªå®šä¹‰åˆ é™¤å™¨ï¼ŒptrJsonè¢«é”€æ¯æ—¶è‡ªåŠ¨è°ƒç”¨freeJson
 	std::shared_ptr<KJson> ptrJson(parserResult, freeJson);
 	return ptrJson;
 }
 
 
-// ¼ÇÂ¼´òÓ¡Éî¶È
+// è®°å½•æ‰“å°æ·±åº¦
 static int printDepth = 0;
 
 std::ostream& printString(std::ostream& os, KJson* srcJson) {
@@ -261,7 +261,7 @@ std::ostream& printJson(std::ostream& os, KJson* srcJson) {
 			os << "   ";
 
 		os << '\"' << child->returnKey() << "\": ";
-		os << child;  // µİ¹éÖØÔØ
+		os << child;  // é€’å½’é‡è½½
 		child = child->returnNext();
 		if (child != nullptr)
 			os << ",";
@@ -303,7 +303,7 @@ std::ostream& operator << (std::ostream& os, KJson* srcJson) {
 		return printNum(os, srcJson);
 		break;
 
-	case KJson::JsonBool:		
+	case KJson::JsonBool:
 		return printBool(os, srcJson);
 		break;
 
@@ -427,8 +427,8 @@ std::string escapeXml(std::string& str) {
 
 
 bool isAllDigits(const std::string& str) {
-	std::regex pattern("^\\d+$"); // ¶¨ÒåÕıÔò±í´ïÊ½Ä£Ê½
-	return std::regex_match(str, pattern); // ¼ì²éÕû¸ö×Ö·û´®ÊÇ·ñÆ¥ÅäÄ£Ê½
+	std::regex pattern("^\\d+$"); // å®šä¹‰æ­£åˆ™è¡¨è¾¾å¼æ¨¡å¼
+	return std::regex_match(str, pattern); // æ£€æŸ¥æ•´ä¸ªå­—ç¬¦ä¸²æ˜¯å¦åŒ¹é…æ¨¡å¼
 }
 
 
@@ -444,17 +444,17 @@ std::vector<std::string> split(const std::string& str, char delimiter) {
 }
 
 
-KJson* wrongText(std::stringstream& srcStream) { 
-	ptrError->throwException(KJsonError::wrongText); 
+KJson* wrongText(std::stringstream& srcStream) {
+	ptrError->throwException(KJsonError::wrongText);
 	std::string failPos;
 	getline(srcStream, failPos);
-	std::wcout << L"³ö´íµÄÎÄ±¾Î»ÖÃÈçÏÂ£º" << std::endl;
+	std::wcout << L"å‡ºé”™çš„æ–‡æœ¬ä½ç½®å¦‚ä¸‹ï¼š" << std::endl;
 	std::cout << failPos << std::endl;
 	return ptrError;
 }
 
 
 KJson* wrongAllocate() {
-	ptrError->throwException(KJsonError::wrongAllocate); 
+	ptrError->throwException(KJsonError::wrongAllocate);
 	return ptrError;
 }

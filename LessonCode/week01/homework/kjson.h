@@ -12,18 +12,19 @@
 
 
 
-/********************* JSON½âÎöÀà ************************/
+/********************* JSONè§£æç±» ************************/
 class KJson {
 public:
-	enum KJsonType {JsonString, JsonNum, JsonBool, JsonNull, JsonJson, JsonArray, JsonError};
-	enum errorType { wrongText, wrongAllocate, wrongKeyname, wrongIndex};
+	enum KJsonType { JsonString, JsonNum, JsonBool, JsonNull, JsonJson, JsonArray, JsonError };
+	enum errorType { wrongText, wrongAllocate, wrongKeyname, wrongIndex };
 
 	KJson(KJsonType valueType = JsonJson, KJson* left = nullptr, KJson* right = nullptr, const std::string& keyName = "")
 		: type(valueType)
 		, prev(left)
 		, next(right)
 		, child(nullptr)
-		, key(keyName){}
+		, key(keyName) {
+	}
 
 	~KJson() {}
 
@@ -38,49 +39,49 @@ public:
 	KJson* returnChild() { return this->child; }
 	KJsonType returnType() { return this->type; }
 
-	// ¾ßÌåÊµÏÖ¼û¸÷ÅÉÉúÀàÖĞµÄoverride°æ±¾
-	// Ö®ËùÒÔÔÚ´Ë´¦ÓÃĞéº¯ÊıÉùÃ÷£¬ÊÇÎªÁËÄÜÍ³Ò»ÓÃ»ùÀàÖ¸Õë¹ÜÀíÅÉÉúÀà
-	// ×¢Òâ£¬²»ÒªÓÃ´¿Ğéº¯Êı£¬ÒòÎª²»ÊÇÃ¿Ò»¸öÅÉÉúÀà¶¼ĞèÒªÕâ¸ö·½·¨
+	// å…·ä½“å®ç°è§å„æ´¾ç”Ÿç±»ä¸­çš„overrideç‰ˆæœ¬
+	// ä¹‹æ‰€ä»¥åœ¨æ­¤å¤„ç”¨è™šå‡½æ•°å£°æ˜ï¼Œæ˜¯ä¸ºäº†èƒ½ç»Ÿä¸€ç”¨åŸºç±»æŒ‡é’ˆç®¡ç†æ´¾ç”Ÿç±»
+	// æ³¨æ„ï¼Œä¸è¦ç”¨çº¯è™šå‡½æ•°ï¼Œå› ä¸ºä¸æ˜¯æ¯ä¸€ä¸ªæ´¾ç”Ÿç±»éƒ½éœ€è¦è¿™ä¸ªæ–¹æ³•
 	virtual void setValue(std::string str) {}
 	virtual void setValue(bool val) {}
 	virtual void setValue(int val) {}
 	virtual void setValue(double val) {}
 
-	// Õâ¼¸¸öĞéº¯Êı²»Ğ´³ÉÍ¬ÃûÖØÔØĞÎÊ½ÊÇÒòÎª£¬ÎŞ·¨½öÆ¾·µ»ØÖµ²»Í¬À´ÖØÔØ
+	// è¿™å‡ ä¸ªè™šå‡½æ•°ä¸å†™æˆåŒåé‡è½½å½¢å¼æ˜¯å› ä¸ºï¼Œæ— æ³•ä»…å‡­è¿”å›å€¼ä¸åŒæ¥é‡è½½
 	virtual std::string returnStr() { return ""; }
 	virtual bool returnBool() { return 0; }
 	virtual bool returnNumType() { return 0; }
 	virtual int returnInt() { return 0; }
 	virtual double returnDouble() { return 0; }
 
-	
-	// ÊµÏÖ¶¯Ì¬key-value¹ÜÀí
+
+	// å®ç°åŠ¨æ€key-valueç®¡ç†
 	virtual KJson* operator [] (std::string keyName) { return nullptr; }
 	virtual KJson* operator [] (int index) { return nullptr; }
 	virtual KJson* pushBack(KJson* newItem) { return nullptr; }
 	virtual void remove(int index) {}
 	virtual void remove(std::string keyName) {}
 
-	// Òì³£´¦Àí
+	// å¼‚å¸¸å¤„ç†
 	virtual void throwException(errorType type) {}
 
 private:
 	KJsonType type;
 
-	// ¶ººÅÇ°µÄkey-value£¬¶ººÅºóµÄkey-value£¬Ç¶Ì×json¶ÔÏó
-	KJson *prev, *next, *child;
+	// é€—å·å‰çš„key-valueï¼Œé€—å·åçš„key-valueï¼ŒåµŒå¥—jsonå¯¹è±¡
+	KJson* prev, * next, * child;
 
 	std::string key;
 };
 
 
-// ×¢Òâ£¬¸ÃÈ«¾Ö±äÁ¿µÄ¶¨ÒåÎ»ÖÃ²»ÄÜ±ä
-// Èô·ÅÔÚÍ·ÎÄ¼ş¿ªÍ·Ôò»áKjsonÀàĞÍÎ´¶¨Òå
-// ·ÅÔÚ½áÎ²ÓÖ»áµ¼ÖÂptrError±äÁ¿ÎŞ·¨Ê¹ÓÃ
+// æ³¨æ„ï¼Œè¯¥å…¨å±€å˜é‡çš„å®šä¹‰ä½ç½®ä¸èƒ½å˜
+// è‹¥æ”¾åœ¨å¤´æ–‡ä»¶å¼€å¤´åˆ™ä¼šKjsonç±»å‹æœªå®šä¹‰
+// æ”¾åœ¨ç»“å°¾åˆä¼šå¯¼è‡´ptrErrorå˜é‡æ— æ³•ä½¿ç”¨
 extern KJson* ptrError;
 
 
-// valueÎª×Ö·û´®µÄÊı¾İÀàĞÍ
+// valueä¸ºå­—ç¬¦ä¸²çš„æ•°æ®ç±»å‹
 class KJsonString : public KJson {
 public:
 	KJsonString() : KJson(JsonString) {}
@@ -95,10 +96,10 @@ private:
 };
 
 
-// valueÎªÕûÊı»ò¸¡µãÊıµÄÊı¾İÀàĞÍ
+// valueä¸ºæ•´æ•°æˆ–æµ®ç‚¹æ•°çš„æ•°æ®ç±»å‹
 class KJsonNum : public KJson {
 public:
-	KJsonNum() : KJson(JsonNum),numType(true), valueInt(0), valueDouble(0.0) {}
+	KJsonNum() : KJson(JsonNum), numType(true), valueInt(0), valueDouble(0.0) {}
 	~KJsonNum() {}
 
 	void setValue(int val) override { this->valueInt = val; }
@@ -111,13 +112,13 @@ public:
 
 
 private:
-	bool numType;  // true´ú±íÕûÊı£¬false¸¡µãÊı
+	bool numType;  // trueä»£è¡¨æ•´æ•°ï¼Œfalseæµ®ç‚¹æ•°
 	int valueInt;
 	double valueDouble;
 };
 
 
-// valueÎª²¼¶ûÖµµÄÊı¾İÀàĞÍ
+// valueä¸ºå¸ƒå°”å€¼çš„æ•°æ®ç±»å‹
 class KJsonBool : public KJson {
 public:
 	KJsonBool() : KJson(JsonBool), boolValue(true) {}
@@ -132,7 +133,7 @@ private:
 };
 
 
-// valueÎªnullµÄÊı¾İÀàĞÍ
+// valueä¸ºnullçš„æ•°æ®ç±»å‹
 class KJsonNull : public KJson {
 public:
 	KJsonNull() : KJson(JsonNull) {}
@@ -141,7 +142,7 @@ public:
 };
 
 
-// valueÎªJson¶ÔÏóµÄÊı¾İÀàĞÍ
+// valueä¸ºJsonå¯¹è±¡çš„æ•°æ®ç±»å‹
 class KJsonJson : public KJson {
 public:
 	KJsonJson() : KJson(JsonJson) {}
@@ -177,7 +178,7 @@ public:
 		KJson* nextItem = removeItem->returnNext();
 		KJson* prevItem = removeItem->returnPrev();
 
-		// É¾³ıÊ×ÔªËØ
+		// åˆ é™¤é¦–å…ƒç´ 
 		if (this->returnChild() == removeItem) {
 			this->setChild(nextItem);
 			if (nextItem != nullptr)
@@ -188,7 +189,7 @@ public:
 			return;
 		}
 
-		// É¾³ı·ÇÊ×ÔªËØ
+		// åˆ é™¤éé¦–å…ƒç´ 
 		prevItem->setNext(nextItem);
 		if (nextItem != nullptr)
 			nextItem->setPrev(prevItem);
@@ -202,8 +203,8 @@ public:
 };
 
 
-// valueÎªÊı×éµÄÊı¾İÀàĞÍ
-class KJsonArray: public KJson {
+// valueä¸ºæ•°ç»„çš„æ•°æ®ç±»å‹
+class KJsonArray : public KJson {
 public:
 	KJsonArray() : KJson(JsonArray) {}
 	~KJsonArray() {}
@@ -234,13 +235,13 @@ public:
 		return child;
 	}
 
-	// Ë«ÏòÁ´±íµÄÉ¾³ı
+	// åŒå‘é“¾è¡¨çš„åˆ é™¤
 	void remove(int index) override {
 		KJson* removeItem = (*this)[index];
 		KJson* nextItem = removeItem->returnNext();
 		KJson* prevItem = removeItem->returnPrev();
 
-		// É¾³ıÊ×ÔªËØ
+		// åˆ é™¤é¦–å…ƒç´ 
 		if (index == 0) {
 			this->setChild(nextItem);
 			if (nextItem != nullptr)
@@ -251,7 +252,7 @@ public:
 			return;
 		}
 
-		// É¾³ı·ÇÊ×ÔªËØ
+		// åˆ é™¤éé¦–å…ƒç´ 
 		prevItem->setNext(nextItem);
 		if (nextItem != nullptr)
 			nextItem->setPrev(prevItem);
@@ -269,7 +270,7 @@ public:
 
 	KJsonError() : KJson(JsonError) {};
 	~KJsonError();
-		
+
 	void throwException(errorType type) override {
 		switch (type) {
 		case KJsonError::wrongText: this->exception = "throw an exception of \"wrong json text\"";
@@ -290,58 +291,58 @@ private:
 };
 
 
-/********************* Íâ²¿¹¦ÄÜ½Ó¿Ú ************************/
+/********************* å¤–éƒ¨åŠŸèƒ½æ¥å£ ************************/
 
-// ½âÎöÍêÕûµÄjsonÎÄ¼ş
+// è§£æå®Œæ•´çš„jsonæ–‡ä»¶
 std::shared_ptr<KJson> parserAll(std::string path);
 
-// ÖØÔØ<<ÓÃÓÚ´òÓ¡json½á¹¹
+// é‡è½½<<ç”¨äºæ‰“å°jsonç»“æ„
 std::ostream& operator << (std::ostream& os, KJson* srcJson);
 
-// ¿ØÖÆÌ¨½»»¥
+// æ§åˆ¶å°äº¤äº’
 void interact();
 
-// ½«jsonÊä³öÎªxmlÎÄ¼ş
+// å°†jsonè¾“å‡ºä¸ºxmlæ–‡ä»¶
 void outputXml(std::shared_ptr<KJson>& ptrJson, const std::string& filename = "tests/output.xml");
 
-/********************* ÄÚ²¿utils½Ó¿Ú ************************/
+/********************* å†…éƒ¨utilsæ¥å£ ************************/
 
-// ×¢Òâ!!!
-// ÏÂÃæËùÓĞ´«stringstreamµÄµØ·½¶¼ÓÃÒıÓÃ´«Öµ£¬
-// ÒòÎªÒªĞŞ¸ÄÔ­stringstreamÖĞµÄ¶ÁĞ´Á÷Ö¸Õë
+// æ³¨æ„!!!
+// ä¸‹é¢æ‰€æœ‰ä¼ stringstreamçš„åœ°æ–¹éƒ½ç”¨å¼•ç”¨ä¼ å€¼ï¼Œ
+// å› ä¸ºè¦ä¿®æ”¹åŸstringstreamä¸­çš„è¯»å†™æµæŒ‡é’ˆ
 
 
-// È¥³ı´Ó¶ÁĞ´Á÷Ö¸ÕëÎ»ÖÃ¿ªÊ¼µÄ¿Õ¸ñ(ÒÔ¼°ÆäËü·Ç×Ö·ûĞÍasciiÂë)
+// å»é™¤ä»è¯»å†™æµæŒ‡é’ˆä½ç½®å¼€å§‹çš„ç©ºæ ¼(ä»¥åŠå…¶å®ƒéå­—ç¬¦å‹asciiç )
 std::stringstream& removeWhiteSpace(std::stringstream& srcStream);
 
-// ½âÎö×Ö·û´®ĞÍkey-value
+// è§£æå­—ç¬¦ä¸²å‹key-value
 KJson* parserString(std::stringstream& srcStream);
 
-// ½âÎöÕûÊıºÍ¸¡µãĞÍkey-value
+// è§£ææ•´æ•°å’Œæµ®ç‚¹å‹key-value
 KJson* parserNum(std::stringstream& srcStream);
 
-// ½âÎö²¼¶ûĞÍkey-value
+// è§£æå¸ƒå°”å‹key-value
 KJson* parserBool(std::stringstream& srcStream);
 
-// ½âÎö¿ÕÖµkey-value
+// è§£æç©ºå€¼key-value
 KJson* parserNull(std::stringstream& srcStream);
 
-// ½âÎöÒ»¸öJson¶ÔÏó(ÆäÖĞÒ²¿ÉÒÔÇ¶Ì×ÆäËüJson¶ÔÏó)
+// è§£æä¸€ä¸ªJsonå¯¹è±¡(å…¶ä¸­ä¹Ÿå¯ä»¥åµŒå¥—å…¶å®ƒJsonå¯¹è±¡)
 KJson* parserJson(std::stringstream& srcStream);
 
-// ½âÎöÊı×éĞÍkey-value
+// è§£ææ•°ç»„å‹key-value
 KJson* parserArray(std::stringstream& srcStream);
 
-// »ñÈ¡Ò»¸ökey-valueµÄkeyÖµ
+// è·å–ä¸€ä¸ªkey-valueçš„keyå€¼
 std::string getKeyname(std::stringstream& srcStream);
 
-// »ñÈ¡Ã°ºÅºóµÄvalueÖµ
+// è·å–å†’å·åçš„valueå€¼
 KJson* parseValue(std::stringstream& srcStream);
 
-// ÊÍ·ÅÕû¸öJson½á¹¹µÄÄÚ´æ
+// é‡Šæ”¾æ•´ä¸ªJsonç»“æ„çš„å†…å­˜
 void freeJson(KJson* ptrJson);
 
-// ÓÃÓÚÖØÔØ<<£¬´òÓ¡json½á¹¹
+// ç”¨äºé‡è½½<<ï¼Œæ‰“å°jsonç»“æ„
 std::ostream& printString(std::ostream& os, KJson* srcJson);
 std::ostream& printNum(std::ostream& os, KJson* srcJson);
 std::ostream& printBool(std::ostream& os, KJson* srcJson);
@@ -349,19 +350,19 @@ std::ostream& printNull(std::ostream& os, KJson* srcJson);
 std::ostream& printJson(std::ostream& os, KJson* srcJson);
 std::ostream& printArray(std::ostream& os, KJson* srcJson);
 
-// json½á¹¹×ªÎªxml½á¹¹
+// jsonç»“æ„è½¬ä¸ºxmlç»“æ„
 std::string json2Xml(KJson* json);
 
-// ÓÃÓÚ×ªÒå XML ÖĞµÄÌØÊâ×Ö·û
+// ç”¨äºè½¬ä¹‰ XML ä¸­çš„ç‰¹æ®Šå­—ç¬¦
 std::string escapeXml(std::string& str);
 
-// ÅĞ¶ÏstrÊÇ·ñÎªÈ«Êı×Ö
+// åˆ¤æ–­stræ˜¯å¦ä¸ºå…¨æ•°å­—
 bool isAllDigits(const std::string& str);
 
-// ·Ö¸îstring
+// åˆ†å‰²string
 std::vector<std::string> split(const std::string& str, char delimiter);
 
-// ¶Ô´íÎóµÄjsonÎÄ±¾Å×³öÒì³£
+// å¯¹é”™è¯¯çš„jsonæ–‡æœ¬æŠ›å‡ºå¼‚å¸¸
 KJson* wrongText(std::stringstream& srcStream);
 KJson* wrongAllocate();
 
