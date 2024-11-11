@@ -14,7 +14,7 @@ SET(CMAKE_TOOLCHAIN_FILE  "${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty_install/vcp
 
 
 
-project(Develop-Train)  #添加当前项目名称
+project(qlh-project)  #添加当前项目名称
 
 
 
