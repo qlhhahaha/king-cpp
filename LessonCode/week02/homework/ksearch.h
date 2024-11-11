@@ -6,20 +6,39 @@
 #include<vector>
 #include<string>
 #include<locale>
+#include<chrono>
+#include<unordered_map>
+
+
 
 class KSearch {
 public:
-	KSearch();
-	~KSearch();
+	KSearch(std::string datasetPath, std::string keywordPath, std::string outputPath) :
+		datasetPath(datasetPath)
+		, keywordPath(keywordPath)
+		, outputPath(outputPath) {
+	}
 
-	void loadKeyword(const std::string& keywordPath);
+	~KSearch() {}
+
+	void loadDataset();
+	void loadKeyword();
+	void search();
+
+
 
 private:
+	const std::string datasetPath;
+	const std::string keywordPath;
+	const std::string outputPath;
+
+	std::string dataset;
 	std::vector<std::string> keywords;
 
-}
+	std::unordered_map<std::string, int> keywordCount;
 
-
+	void KMP(const std::string& keyword);
+};
 
 
 
