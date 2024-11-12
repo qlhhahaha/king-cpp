@@ -1,13 +1,16 @@
 ﻿#ifndef KSEARCH_H
 #define KSEARCH_H
 
-#include<iostream>
-#include<fstream>
-#include<vector>
-#include<string>
-#include<locale>
-#include<chrono>
-#include<unordered_map>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <locale>
+#include <chrono>
+#include <unordered_map>
+#include <stdexcept>
+#include <windows.h>
+
 
 
 
@@ -38,6 +41,8 @@ private:
 	std::unordered_map<std::string, int> keywordCount;
 
 	void KMP(const std::string& keyword);
+	void linearSearch(const std::string& keyword);
+
 };
 
 

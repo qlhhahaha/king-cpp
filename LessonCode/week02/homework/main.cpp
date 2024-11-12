@@ -17,7 +17,7 @@ int main() {
 	searchEngine.loadDataset();
 	auto endTime1 = std::chrono::high_resolution_clock::now();
 	long long loadTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime1 - startTime1).count();
-	std::cout << "load time: " << loadTime << "ms" << std::endl;
+	std::cout << "load time: " << loadTime << "ms" << std::endl << std::endl;
 
 	// 读取keyword.txt
 	searchEngine.loadKeyword();
