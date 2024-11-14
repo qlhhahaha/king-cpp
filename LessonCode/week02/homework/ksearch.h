@@ -10,16 +10,18 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <windows.h>
+#include <mutex>
+#include <thread>
 
-
-
+extern const int NUM_THREADS;
 
 class KSearch {
 public:
 	KSearch(std::string datasetPath, std::string keywordPath, std::string outputPath) :
 		datasetPath(datasetPath)
 		, keywordPath(keywordPath)
-		, outputPath(outputPath) {
+		, outputPath(outputPath)
+		, chunks(NUM_THREADS){
 	}
 
 	~KSearch() {}
@@ -36,12 +38,14 @@ private:
 	const std::string outputPath;
 
 	std::string dataset;
+	std::vector<std::string> chunks;
 	std::vector<std::string> keywords;
-
 	std::unordered_map<std::string, int> keywordCount;
 
+
 	void KMP(const std::string& keyword);
-	void linearSearch(const std::string& keyword);
+	void linearSearch(int threadID, const std::string& keyword);
+	void readFileChunk(HANDLE fd, HANDLE mapFile, char* pBuffer, long long start, long long length, int threadID);
 
 };
 
