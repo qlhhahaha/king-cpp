@@ -6,9 +6,9 @@
 
    使用windows原生库进行内存映射时犯了两个错： 一是没有用vs性能分析工具验证，想当然地觉得MapViewOfFile()把文件内容映射到内存这个操作会很耗时，企图把它修改为多线程版本实现分段映射，后来一测性能发现根本没必要
 
-   ![](D:\WeChat\微信文件\WeChat Files\wxid_i7kbde8ujz2o22\FileStorage\Temp\5f3525cceac621ae6a0f1c60181d1da.png)
+   ![](append.png)
 
-   ![](D:\WeChat\微信文件\WeChat Files\wxid_i7kbde8ujz2o22\FileStorage\Temp\a167b4cda6b135f03acd0cc54a48ccc.png)
+   ![](map.png)
 
    绝大部分时间都耗在了文件内容从内存copy到string中这个操作上（即append()），MapViewOfFile()几乎没消耗什么性能，查资料分析原因，可能是因为现代OS的虚拟内存机制在处理内存映射时很高效，应该有类似于linux中**懒加载lazy copy**的操作，前期只建立映射关系、等程序真的访问到相应数据时才会把相应的文件页面加载到内存中（这也解释了为啥所有的性能消耗都集中在append()上，因为那会儿才真的去加载文件）
 
