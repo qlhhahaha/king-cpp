@@ -63,7 +63,7 @@ void KSearch::loadDataset() {
 	//for (auto& item : this->chunks)
 	//	std::cout << item << std::endl;
 
-	// TODO: 释放资源放到析构函数中
+	// 释放资源
 	UnmapViewOfFile(pBuffer);
 	CloseHandle(mapFile);
 	CloseHandle(fd);

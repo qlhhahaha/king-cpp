@@ -1,0 +1,9 @@
+load time: 283ms
+
+count:533 time:45ms
+count:6165823 time:187ms
+count:2 time:74ms
+count:1 time:67ms
+count:1 time:85ms
+
+total time: 744ms

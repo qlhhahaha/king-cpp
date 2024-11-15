@@ -30,18 +30,16 @@ public:
 	void loadKeyword();
 	void search();
 
-
-
 private:
 	const std::string datasetPath;
 	const std::string keywordPath;
 	const std::string outputPath;
 
 	std::string dataset;
-	std::vector<std::string> chunks;
 	std::vector<std::string> keywords;
 
 	// Mul版本的用于多线程在每个chunk中操作，最后合并到非Mul版本中
+	std::vector<std::string> chunks;
 	std::unordered_map<std::string, std::vector<size_t>> keywordPos;
 	std::unordered_map<std::string, std::vector<std::vector<size_t>>> keywordPosMul;
 
@@ -54,6 +52,5 @@ private:
 	void readFileChunk(HANDLE fd, HANDLE mapFile, char* pBuffer, long long start, long long length, int threadID);
 	void boundarySearch(const std::string& keyword);
 };
-
 
 #endif
