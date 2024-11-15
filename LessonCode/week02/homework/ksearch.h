@@ -21,7 +21,7 @@ public:
 		datasetPath(datasetPath)
 		, keywordPath(keywordPath)
 		, outputPath(outputPath)
-		, chunks(NUM_THREADS){
+		, chunks(NUM_THREADS) {
 	}
 
 	~KSearch() {}
@@ -40,17 +40,20 @@ private:
 	std::string dataset;
 	std::vector<std::string> chunks;
 	std::vector<std::string> keywords;
+
+	// Mul版本的用于多线程在每个chunk中操作，最后合并到非Mul版本中
+	std::unordered_map<std::string, std::vector<size_t>> keywordPos;
+	std::unordered_map<std::string, std::vector<std::vector<size_t>>> keywordPosMul;
+
 	std::unordered_map<std::string, int> keywordCount;
+	std::unordered_map<std::string, std::vector<int>> keywordCountMul;
 
 
 	void KMP(const std::string& keyword);
 	void linearSearch(int threadID, const std::string& keyword);
 	void readFileChunk(HANDLE fd, HANDLE mapFile, char* pBuffer, long long start, long long length, int threadID);
-
+	void boundarySearch(const std::string& keyword);
 };
-
-
-
 
 
 #endif

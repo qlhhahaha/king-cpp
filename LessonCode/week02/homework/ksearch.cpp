@@ -1,7 +1,7 @@
 ﻿#include "ksearch.h"
 
 std::mutex mtx;
-const int NUM_THREADS = 4;
+const int NUM_THREADS = 8;
 
 
 void KSearch::loadDataset() {
@@ -57,13 +57,11 @@ void KSearch::loadDataset() {
 		threads.push_back(std::thread(&KSearch::readFileChunk, this, fd, mapFile, pBuffer, start, length, i));
 	}
 
-
 	for (auto& thread : threads)
 		thread.join();
 
 	//for (auto& item : this->chunks)
 	//	std::cout << item << std::endl;
-
 
 	// TODO: 释放资源放到析构函数中
 	UnmapViewOfFile(pBuffer);
@@ -102,14 +100,21 @@ void KSearch::loadKeyword() {
 
 	file.close();
 
-	for (auto str : this->keywords)
-		std::cout << str << std::endl;
+	//for (auto str : this->keywords)
+	//	std::cout << str << std::endl;
 	std::cout << std::endl;
+
+	// 提前扩容，处理出现次数很多的keyword，但好像没什么用
+	for (auto str : this->keywords) {
+		// this->keywordPos[str].reserve(7777777);
+		this->keywordPosMul[str].resize(NUM_THREADS);
+		this->keywordCountMul[str].resize(NUM_THREADS);
+	}
+
 }
 
 
 void KSearch::search() {
-
 	for (const auto& keyword : this->keywords) {
 		std::vector<std::thread> threads;
 
@@ -122,19 +127,29 @@ void KSearch::search() {
 		for (auto& thread : threads)
 			thread.join();
 
+		for (int i = 0; i < NUM_THREADS; i++) {
+			this->keywordCount[keyword] += this->keywordCountMul[keyword][i];
+		}
+
+		this->boundarySearch(keyword);
+
 		auto endTime2 = std::chrono::high_resolution_clock::now();
 		long long totalTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2 - startTime2).count();
-
 		std::cout << "count:" << this->keywordCount[keyword] << " time:" << totalTime << "ms" << std::endl;
 	}
+	std::cout << std::endl;
 }
 
 
 void KSearch::linearSearch(int threadID, const std::string& keyword) {
 	std::size_t pos = this->chunks[threadID].find(keyword, 0);
 	while (pos != std::string::npos) {
-		std::lock_guard<std::mutex> guard(mtx);
-		this->keywordCount[keyword]++;
+		//std::lock_guard<std::mutex> guard(mtx);
+
+		// 每个线程的处理结果放到不同的vector中，从而避免使用锁
+		this->keywordCountMul[keyword][threadID]++;
+		this->keywordPosMul[keyword][threadID].push_back(pos);
+
 		pos = this->chunks[threadID].find(keyword, pos + 1);
 	}
 }
@@ -142,4 +157,45 @@ void KSearch::linearSearch(int threadID, const std::string& keyword) {
 
 void KSearch::KMP(const std::string& keyword) {
 
+}
+
+void KSearch::boundarySearch(const std::string& keyword) {
+	std::string boundary, tmpStr;
+	long long tmpLen = 0;
+	int change = 0;
+	std::size_t pos = 0;
+
+	for (int i = 0; i < NUM_THREADS - 1; i++) {
+		// 添加左边界
+		tmpLen = this->chunks[i].length();
+		if (tmpLen > keyword.length()) {
+			tmpStr = this->chunks[i].substr(tmpLen - keyword.length());
+			pos = tmpStr.find(keyword);
+			if (pos != std::string::npos)
+				change--;
+
+			boundary.append(tmpStr);
+		}
+
+
+		// 添加右边界
+		tmpLen = this->chunks[i + 1].length();
+		if (tmpLen > keyword.length()) {
+			tmpStr = this->chunks[i + 1].substr(0, keyword.length());
+			pos = tmpStr.find(keyword);
+			if (pos != std::string::npos)
+				change--;
+
+			boundary.append(tmpStr);
+		}
+	}
+
+	pos = boundary.find(keyword, 0);
+	while (pos != std::string::npos) {
+		this->keywordPos[keyword].push_back(pos);
+		this->keywordCount[keyword]++;
+		pos = boundary.find(keyword, pos + 1);
+	}
+
+	this->keywordCount[keyword] += change;
 }
