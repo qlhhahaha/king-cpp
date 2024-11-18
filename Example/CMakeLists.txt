@@ -1,5 +1,5 @@
 add_subdirectory(qlh-test)
-# add_subdirectory(QtDemo)
+add_subdirectory(QtDemo)
 # add_subdirectory(CppBase)
 # add_subdirectory(GMockExample)
 # add_subdirectory(GtestExample)
