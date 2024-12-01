@@ -9,7 +9,7 @@
 #include <vector>
 #include <string>
 #include <regex>
-
+#include <direct.h>
 
 
 /********************* JSON解析类 ************************/
@@ -26,9 +26,72 @@ public:
 		, key(keyName) {
 	}
 
-	~KJson() {}
 
-	void setKey(std::string val) { this->key = val; }
+	// 移动构造函数
+	KJson(KJson&& other) noexcept
+		: type(other.type), prev(other.prev), next(other.next), child(other.child), key(other.key) {
+		// 将源对象的指针置空，表明所有权已经转移
+		other.prev = nullptr;
+		other.next = nullptr;
+		other.child = nullptr;
+	}
+
+
+	// 移动赋值运算符
+	KJson& operator=(KJson&& other) noexcept {
+		if (this != &other) {
+			// 释放当前对象的已有资源（如果有）
+			if (next != nullptr) {
+				delete next;
+				next = nullptr;
+			}
+
+			if (child != nullptr) {
+				delete child;
+				child = nullptr;
+			}
+
+			if (prev != nullptr) {
+				delete prev;
+				prev = nullptr;
+			}
+
+			// 转移资源
+			type = other.type;
+			prev = other.prev;
+			next = other.next;
+			child = other.child;
+			key = other.key;
+
+			// 将源对象的指针置空
+			other.prev = nullptr;
+			other.next = nullptr;
+			other.child = nullptr;
+		}
+		return *this;
+	}
+
+
+	~KJson() {
+		// 写法其实和freeJson()很相似，也是递归DFS删除
+
+		// 先处理兄弟节点
+		while (this->next != nullptr) {
+			KJson* nextToDelete = this->next;
+			this->next = nextToDelete->next;
+
+			// 注意：这个delete蕴含了递归，最终逻辑和freeJson()一样
+			delete nextToDelete;  
+		}
+
+		// 再处理子节点
+		if (this->child != nullptr) {
+			delete this->child;
+			this->child = nullptr;
+		}
+	}
+
+	void setKey(const std::string& val) { this->key = val; }
 	void setChild(KJson* val) { this->child = val; }
 	void setPrev(KJson* val) { this->prev = val; }
 	void setNext(KJson* val) { this->next = val; }
@@ -86,7 +149,6 @@ class KJsonString : public KJson {
 public:
 	KJsonString() : KJson(JsonString) {}
 	~KJsonString() {}
-
 	void setValue(std::string str) override { this->stringValue = str; }
 
 	std::string returnStr() override { return this->stringValue; }

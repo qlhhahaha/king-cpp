@@ -2,7 +2,7 @@
 
 
 void dynamicTest() {
-	std::shared_ptr<KJson> ptrJson = parserAll("tests/test4.json");
+	std::shared_ptr<KJson> ptrJson = parserAll("tests/test.json");
 	std::cout << ptrJson << std::endl << std::endl;
 	std::wcout << L"key：website对应的value为：" << std::endl;
 
@@ -33,8 +33,7 @@ void dynamicTest() {
 
 void interact() {
 	// TODO 异常输入防御性检查
-
-	std::shared_ptr<KJson>ptrJson = parserAll("tests/test4.json");
+	std::shared_ptr<KJson>ptrJson = parserAll("D:/lab_work_qlh/king/lab-git-push/qianlihui/LessonCode/week01/homework/tests/test.json");
 	std::wcout << L"打印整个json：" << std::endl;
 	std::cout << ptrJson << std::endl << std::endl;
 
@@ -189,6 +188,11 @@ int main()
 	//dynamicTest();
 	interact();
 
+	//char currentPath[100];
+	//_getcwd(currentPath, 100);
+	//std::cout << "当前路径是: " << currentPath << std::endl;
+
+	delete ptrError;
 	return 0;
 }
 

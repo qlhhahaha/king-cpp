@@ -18,16 +18,17 @@ std::stringstream& removeWhiteSpace(std::stringstream& srcStream) {
 }
 
 
+// 改为使用raii机制，在KJson的析构函数中释放资源，此处不再处理
 void freeJson(KJson* ptrJson) {
-	while (ptrJson) {  // 先删兄弟，再删孩子
-		KJson* ptrChild = ptrJson->returnChild();
-		if (ptrChild != nullptr)
-			freeJson(ptrChild);
+	//while (ptrJson) {  // 先删兄弟，再删孩子
+	//	KJson* ptrChild = ptrJson->returnChild();
+	//	if (ptrChild != nullptr)
+	//		freeJson(ptrChild);
 
-		KJson* ptrNext = ptrJson->returnNext();
-		delete ptrJson;
-		ptrJson = ptrNext;
-	}
+	//	KJson* ptrNext = ptrJson->returnNext();
+	//	delete ptrJson;
+	//	ptrJson = ptrNext;
+	//}
 }
 
 
@@ -62,7 +63,6 @@ KJson* parserString(std::stringstream& srcStream) {
 	getline(srcStream, stringValue, '\"');
 	itemString->setValue(stringValue);
 	return itemString;
-
 }
 
 
