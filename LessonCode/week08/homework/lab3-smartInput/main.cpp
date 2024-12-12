@@ -1,10 +1,10 @@
-#include "kmainwindow.h"
+#include "kinputwindow.h"
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    KMainWindow w;
+    KInputWindow w;
     w.show();
     return a.exec();
 }

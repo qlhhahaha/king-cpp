@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.10)  #cmakeï¿½æ±¾ï¿½ï¿½ï¿½3.10
+cmake_minimum_required(VERSION 3.10)  #cmake°æ±¾×îµÍ3.10
 
-# ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½CMakeï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ 
+# »ñÈ¡µ±Ç°×ÓCMakeÎÄ¼þËùÔÚÄ¿Â¼µÄÍêÕûÂ·¾¶ 
 get_filename_component(CURRENT_DIR_PATH "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE) 
-# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ 
+# ´ÓÍêÕûÂ·¾¶ÖÐÌáÈ¡Ä¿Â¼Ãû³Æ 
 get_filename_component(CURRENT_DIR_NAME "${CURRENT_DIR_PATH}" NAME) 
 project(${CURRENT_DIR_NAME})
 
@@ -32,10 +32,11 @@ source_group("Resource Files" FILES ${RCC_FILES})
 
 
 add_executable(${PROJECT_NAME} WIN32 ${HEADER_FILES} ${CPP_FILES} ${UI_FILES} ${RCC_FILES})
-
+target_include_directories(${PROJECT_NAME} PRIVATE "D:/lab_work_qlh/king/tablet_sdk/Include")
 
 target_link_libraries(${PROJECT_NAME} 
 	Qt5::Widgets
 	Qt5::Core
 	Qt5::Gui
+
 )
