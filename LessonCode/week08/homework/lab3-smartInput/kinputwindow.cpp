@@ -1,23 +1,33 @@
-#include "kinputwindow.h"
+ï»¿#include "kinputwindow.h"
 
 KInputWindow::KInputWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
 
-    // ³õÊ¼»¯Í¼Æ¬×ÊÔ´
+    // åˆå§‹åŒ–å›¾ç‰‡èµ„æº
     QPixmap* pixmap = new QPixmap(":/image/logo.png");
     pixmap->scaled(ui.label->size(), Qt::KeepAspectRatio);
     ui.label->setScaledContents(true);
     ui.label->setPixmap(*pixmap);
 
 
-    // ³õÊ¼»¯ÊÖÐ´ÇøÓò
+    // åˆå§‹åŒ–æ‰‹å†™åŒºåŸŸ
     WId hShow = ui.inputZone->winId();
     this->inputs.inputInit((HWND)hShow);
 
-    // Á¬½Ó¸÷°´¼üµÄÐÅºÅ
+    // è¿žæŽ¥å„æŒ‰é”®çš„ä¿¡å·
     connect(ui.clearStrokeBtn, &QPushButton::clicked, this, &KInputWindow::onClearBtnClicked);
+    connect(ui.backStrokeBtn, &QPushButton::clicked, this, &KInputWindow::onBackBtnClicked);
+    connect(ui.guessBtn1, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_1);
+    connect(ui.guessBtn2, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_2);
+    connect(ui.guessBtn3, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_3);
+    connect(ui.guessBtn4, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_4);
+    connect(ui.guessBtn5, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_5);
+    connect(ui.guessBtn6, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_6);
+    connect(ui.guessBtn7, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_7);
+    connect(ui.guessBtn8, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_8);
+    connect(ui.guessBtn9, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_9);
 }
 
 
@@ -25,11 +35,7 @@ KInputWindow::~KInputWindow() {
     
 }
  
-
-void KInputWindow::mouseReleaseEvent(QMouseEvent* e) {
-    this->inputResult.clear();
-    this->inputs.recognize(this->inputResult);
-
+void KInputWindow::updateRecoResult() {
     ui.guessBtn1->setText(QString::fromUtf8(QByteArray(inputResult[0].c_str(), inputResult[0].size())));
     ui.guessBtn2->setText(QString::fromUtf8(QByteArray(inputResult[1].c_str(), inputResult[1].size())));
     ui.guessBtn3->setText(QString::fromUtf8(QByteArray(inputResult[2].c_str(), inputResult[2].size())));
@@ -39,13 +45,22 @@ void KInputWindow::mouseReleaseEvent(QMouseEvent* e) {
     ui.guessBtn7->setText(QString::fromUtf8(QByteArray(inputResult[6].c_str(), inputResult[6].size())));
     ui.guessBtn8->setText(QString::fromUtf8(QByteArray(inputResult[7].c_str(), inputResult[7].size())));
     ui.guessBtn9->setText(QString::fromUtf8(QByteArray(inputResult[8].c_str(), inputResult[8].size())));
+    ui.inputResult->setText(ui.guessBtn1->text());
+}
+
+void KInputWindow::mouseReleaseEvent(QMouseEvent* e) {
+    this->inputResult.clear();
+    this->inputs.recognize(this->inputResult, true);
+
+    updateRecoResult();
 }
 
 
 void KInputWindow::onClearBtnClicked() {
-    this->inputs.clearStrokes();  // Çå³ý´æ´¢µÄ±Ê´¥
-    this->inputResult.clear();  // Çå³ýÊ¶±ð½á¹û
+    this->inputs.clearStrokes();  // æ¸…é™¤å­˜å‚¨çš„ç¬”è§¦
+    this->inputResult.clear();  // æ¸…é™¤è¯†åˆ«ç»“æžœ
 
+    ui.inputResult->clear();
     ui.inputZone->clear();
     ui.guessBtn1->setText("1");
     ui.guessBtn2->setText("2");
@@ -62,3 +77,70 @@ void KInputWindow::onClearBtnClicked() {
     ui.guessBtn13->setText("13");
 }
 
+void KInputWindow::onBackBtnClicked() {
+    int returnCode = inputs.backStrokes();
+
+    if (returnCode == 2)  // å¦‚æžœæ’¤é”€çš„æ˜¯æœ€åŽä¸€ä¸ªç¬”ç”»
+        onClearBtnClicked();
+
+    if (returnCode == 1) {  // å¦‚æžœæ’¤é”€çš„æ˜¯å‰é¢çš„é‚£äº›ç¬”ç”»
+        WId hShow = ui.inputZone->winId();
+        InvalidateRect((HWND)hShow, NULL, TRUE);
+
+        this->inputResult.clear();
+        this->inputs.recognize(this->inputResult, false);
+        updateRecoResult();
+    }
+}
+
+void KInputWindow::onWordBtnClicked_1(){
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn1->text());
+}
+
+
+void KInputWindow::onWordBtnClicked_2() {
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn2->text());
+}
+
+
+void KInputWindow::onWordBtnClicked_3() {
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn3->text());
+}
+
+
+void KInputWindow::onWordBtnClicked_4() {
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn4->text());
+}
+
+
+void KInputWindow::onWordBtnClicked_5() {
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn5->text());
+}
+
+
+void KInputWindow::onWordBtnClicked_6() {
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn6->text());
+}
+
+
+void KInputWindow::onWordBtnClicked_7() {
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn7->text());
+}
+
+
+void KInputWindow::onWordBtnClicked_8() {
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn8->text());
+}
+
+void KInputWindow::onWordBtnClicked_9() {
+    ui.inputResult->clear();
+    ui.inputResult->setText(ui.guessBtn9->text());
+}

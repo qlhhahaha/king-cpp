@@ -1,4 +1,4 @@
-#include "handswriting.h"
+ï»¿#include "handswriting.h"
 #include <QDebug>
 
 handsInput::handsInput(QWidget* parent) : QWidget(parent) {
@@ -39,67 +39,76 @@ void handsInput::inputInit(HWND hwnd) {
 
     HRESULT hr;
 
-    // Ê¹ÓÃÄ¬ÈÏÊ¶±ğÆ÷´´½¨Ò»¸öÊ¶±ğÉÏÏÂÎÄ
-    // ¸ÃÉÏÏÂÎÄ»áÔÚºóĞøËùÓĞÊ¶±ğ¶ÔÏóÖĞÊ¹ÓÃ
+    // ä½¿ç”¨é»˜è®¤è¯†åˆ«å™¨åˆ›å»ºä¸€ä¸ªè¯†åˆ«ä¸Šä¸‹æ–‡
+    // è¯¥ä¸Šä¸‹æ–‡ä¼šåœ¨åç»­æ‰€æœ‰è¯†åˆ«å¯¹è±¡ä¸­ä½¿ç”¨
     hr = CoCreateInstance(CLSID_InkRecognizerContext,
         NULL, CLSCTX_INPROC_SERVER,
         IID_IInkRecognizerContext,
         (void**)&g_pIInkRecoContext);
 
     if (FAILED(hr)) {
-        qDebug() << "Ã»ÓĞ°²×°ÊÖĞ´recoginizer";
+        qDebug() << "æ²¡æœ‰å®‰è£…æ‰‹å†™recoginizer";
         return;
     }
 
     
-    // ´´½¨Ä«¼£ÊÕ¼¯¶ÔÏó
+    // åˆ›å»ºå¢¨è¿¹æ”¶é›†å¯¹è±¡
     hr = CoCreateInstance(CLSID_InkCollector,
         NULL, CLSCTX_INPROC_SERVER,
         IID_IInkCollector,
         (void**)&g_pIInkCollector);
 
     if (FAILED(hr)) {
-        qDebug() << "´´½¨Ä«¼£ÊÕ¼¯¶ÔÏóÊ§°Ü";
+        qDebug() << "åˆ›å»ºå¢¨è¿¹æ”¶é›†å¯¹è±¡å¤±è´¥";
         return;
     }
 
 
-    // »ñÈ¡Ä«¼£¶ÔÏóµÄÖ¸Õë
+    // è·å–å¢¨è¿¹å¯¹è±¡çš„æŒ‡é’ˆ
     hr = g_pIInkCollector->get_Ink(&g_pIInkDisp);
     if (FAILED(hr)) {
-        qDebug() << "»ñÈ¡Ä«¼£¶ÔÏóÖ¸ÕëÊ§°Ü";
+        qDebug() << "è·å–å¢¨è¿¹å¯¹è±¡æŒ‡é’ˆå¤±è´¥";
         return;
     }
 
 
-    // ¸æËßÊÕ¼¯Æ÷ÒªÊÕ¼¯ÄÄ¸ö´°¿ÚµÄÄ«¼£
+    // å‘Šè¯‰æ”¶é›†å™¨è¦æ”¶é›†å“ªä¸ªçª—å£çš„å¢¨è¿¹
     hr = g_pIInkCollector->put_hWnd((long)hwnd);
     if (FAILED(hr)) {
         return;
     }
 
 
-    // ÉèÖÃÑÕÉ«
+    // è®¾ç½®é¢œè‰²
     IInkDrawingAttributes* p;
     if (SUCCEEDED(g_pIInkCollector->get_DefaultDrawingAttributes(&p))) {
         p->put_Color(RGB(255, 0, 0));
     }
 
 
-    // ¿ªÆôÄ«¼£ÊäÈë
+    // å¼€å¯å¢¨è¿¹è¾“å…¥
     hr = g_pIInkCollector->put_Enabled(VARIANT_TRUE);
     if (FAILED(hr)) {
-        qDebug() << "Ä«¼£ÊäÈë¿ªÆôÊ§°Ü";
+        qDebug() << "å¢¨è¿¹è¾“å…¥å¼€å¯å¤±è´¥";
         return;
     }
 
 
+    VARIANT_BOOL autoRedraw = VARIANT_TRUE;
+    hr = g_pIInkCollector->put_AutoRedraw(autoRedraw);
+    if (FAILED(hr))
+    {
+        qDebug() << "è®¾ç½®è‡ªåŠ¨é‡ç»˜å¢¨è¿¹å¤±è´¥";
+        g_pIInkCollector->Release();
+        CoUninitialize();
+        return;
+    }
 
 }
 
 
-void handsInput::recognize(std::vector<std::string>& inputResult) {
-    // Êó±ê±ä³ÉÉ³Â©
+void handsInput::recognize(std::vector<std::string>& inputResult, bool isRecord) {
+    // é¼ æ ‡å˜æˆæ²™æ¼
     HCURSOR hCursor = ::SetCursor(::LoadCursor(NULL, IDC_WAIT));
     // Get a pointer to the ink stroke collection
     // This collection is a snapshot of the entire ink object
@@ -108,32 +117,42 @@ void handsInput::recognize(std::vector<std::string>& inputResult) {
         inputResult.clear();
     }
 
-    // »ñÈ¡Ö¸ÏòÄ«¼£ÊÕ¼¯Æ÷µÄÖ¸Õë
+    // è·å–æŒ‡å‘å¢¨è¿¹æ”¶é›†å™¨çš„æŒ‡é’ˆ
     IInkStrokes* pIInkStrokes = NULL;
     HRESULT hr = g_pIInkDisp->get_Strokes(&pIInkStrokes);
     if (SUCCEEDED(hr))
     {
-        // ½«±Ê´¥ÊÕ¼¯Æ÷´«µİ¸øÊ¶±ğÆ÷
+        if (isRecord) {
+            // å­˜å‚¨å•ä¸ªç¬”ç”»
+            long strokesSize = 0;
+            IInkStrokeDisp* newStroke = nullptr;
+            pIInkStrokes->get_Count(&strokesSize);
+            pIInkStrokes->Item(strokesSize - 1, &newStroke);
+            this->strokeRecord.push_back(newStroke);
+            //newStroke->AddRef();
+        }
+
+        // å°†ç¬”è§¦æ”¶é›†å™¨ä¼ é€’ç»™è¯†åˆ«å™¨
         hr = g_pIInkRecoContext->putref_Strokes(pIInkStrokes);
         if (SUCCEEDED(hr))
         {
-            // Ê¶±ğ
+            // è¯†åˆ«
             IInkRecognitionResult* pIInkRecoResult = NULL;
             InkRecognitionStatus RecognitionStatus;
             hr = g_pIInkRecoContext->Recognize(&RecognitionStatus, &pIInkRecoResult);
             if (SUCCEEDED(hr) && (pIInkRecoResult != NULL))
             {
-                // Ã¶¾ÙËùÓĞ¿ÉÄÜ½á¹û
+                // æšä¸¾æ‰€æœ‰å¯èƒ½ç»“æœ
                 IInkRecognitionAlternates* spIInkRecoAlternates;
                 hr = pIInkRecoResult->AlternatesFromSelection(
                     0,
                     -1,
-                    10,  // ºòÑ¡µ¥´ÊÊıÁ¿
+                    10,  // å€™é€‰å•è¯æ•°é‡
                     &spIInkRecoAlternates);
                 long lCount = 0;
 
                 if (SUCCEEDED(hr) && SUCCEEDED(spIInkRecoAlternates->get_Count(&lCount))) {
-                    // »ñÈ¡ËùÓĞÊ¶±ğ½á¹û
+                    // è·å–æ‰€æœ‰è¯†åˆ«ç»“æœ
                     IInkRecognitionAlternate* pIInkRecoAlternate = nullptr;
                     for (long i = 0; (i < lCount) && (i < 10); i++) {
                         if (SUCCEEDED(spIInkRecoAlternates->Item(i, &pIInkRecoAlternate))) {
@@ -149,7 +168,7 @@ void handsInput::recognize(std::vector<std::string>& inputResult) {
                     }
                 }
             }
-            // ÖØÖÃÊ¶±ğÆ÷ÄÚÈİ
+            // é‡ç½®è¯†åˆ«å™¨å†…å®¹
             g_pIInkRecoContext->putref_Strokes(nullptr);
         }
         pIInkStrokes->Release();
@@ -159,11 +178,36 @@ void handsInput::recognize(std::vector<std::string>& inputResult) {
 }
 
 
+int handsInput::backStrokes() {
+    if (this->strokeRecord.empty()) 
+        return BACK_STROKE_FAIL;
+    else
+        qDebug() << "å±å¹•ä¸ºç©ºï¼Œæ— éœ€æ’¤é”€";
+        
+    IInkStrokeDisp* lastStroke = this->strokeRecord.back();
+    this->strokeRecord.pop_back();
+    if (lastStroke) {
+        HRESULT hr = g_pIInkDisp->DeleteStroke(lastStroke);
+        if (FAILED(hr)) {
+            qDebug() << "æ’¤é”€å¤±è´¥";
+            return BACK_STROKE_FAIL;
+        }
+        lastStroke->Release();
+
+        // å¦‚æœåˆ çš„æ˜¯æœ€åä¸€ä¸ªç¬”ç”»å°±è¿”å›BACK_STROKE_LAST_STROKEï¼Œåç»­æ— éœ€å†recognize
+        if (this->strokeRecord.empty())
+            return BACK_STROKE_LAST_STROKE;
+    }
+
+    return BACK_STROKE_SUCCESS;
+}
+
+
 void handsInput::clearStrokes() {
-    // Çå³ı±Ê´¥
+    // æ¸…é™¤ç¬”è§¦
 	HRESULT hr = this->g_pIInkDisp->DeleteStrokes(0);
 	if (FAILED(hr)) {
-		qDebug() << "Çå³ı±Ê´¥Ê§°Ü";
+		qDebug() << "æ¸…é™¤ç¬”è§¦å¤±è´¥";
 		return;
 	}
 

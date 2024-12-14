@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.10)  #cmake░ц▒╛╫ю╡═3.10
+я╗┐cmake_minimum_required(VERSION 3.10)  #cmakeя┐╜ц▒╛я┐╜я┐╜я┐╜3.10
 
-# ╗ё╚б╡▒╟░╫╙CMake╬─╝■╦∙╘┌─┐┬╝╡─═ъ╒√┬╖╛╢ 
+# я┐╜я┐╜╚бя┐╜я┐╜╟░я┐╜я┐╜CMakeя┐╜─╝я┐╜я┐╜я┐╜я┐╜я┐╜─┐┬╝я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜┬╖я┐╜я┐╜ 
 get_filename_component(CURRENT_DIR_PATH "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE) 
-# ┤╙═ъ╒√┬╖╛╢╓╨╠с╚б─┐┬╝├√│╞ 
+# я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜┬╖я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜╚б─┐┬╝я┐╜я┐╜я┐╜я┐╜ 
 get_filename_component(CURRENT_DIR_NAME "${CURRENT_DIR_PATH}" NAME) 
 project(${CURRENT_DIR_NAME})
 

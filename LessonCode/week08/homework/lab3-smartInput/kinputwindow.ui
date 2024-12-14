@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1108</width>
+    <width>1179</width>
     <height>780</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>0</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -39,7 +39,7 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>60</x>
       <y>10</y>
       <width>91</width>
       <height>31</height>
@@ -79,15 +79,26 @@
      <rect>
       <x>790</x>
       <y>50</y>
-      <width>201</width>
-      <height>181</height>
+      <width>291</width>
+      <height>201</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>黑体</family>
+      <pointsize>36</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="frameShape">
      <enum>QFrame::Box</enum>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="singleCharBtn">
@@ -125,11 +136,17 @@
       <height>571</height>
      </rect>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::WheelFocus</enum>
+    </property>
     <property name="frameShape">
      <enum>QFrame::Box</enum>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::PlainText</enum>
     </property>
    </widget>
    <widget class="QPushButton" name="backStrokeBtn">
@@ -158,7 +175,7 @@
      <string>重写</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>790</x>
@@ -173,6 +190,12 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+    <property name="font">
+     <font>
+      <family>宋体</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
       <widget class="QPushButton" name="guessBtn1">
@@ -181,6 +204,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>1</string>
@@ -198,6 +227,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>2</string>
        </property>
@@ -213,6 +248,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>3</string>
@@ -230,6 +271,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>4</string>
        </property>
@@ -245,6 +292,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>5</string>
@@ -262,6 +315,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>6</string>
        </property>
@@ -277,6 +336,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>7</string>
@@ -294,6 +359,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>8</string>
        </property>
@@ -309,6 +380,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>9</string>
@@ -326,6 +403,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>10</string>
        </property>
@@ -341,6 +424,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>11</string>
@@ -358,6 +447,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>12</string>
        </property>
@@ -374,6 +469,12 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="font">
+        <font>
+         <family>宋体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>13</string>
        </property>
@@ -384,12 +485,12 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>790</x>
-      <y>600</y>
-      <width>291</width>
+      <y>580</y>
+      <width>301</width>
       <height>51</height>
      </rect>
     </property>
@@ -460,7 +561,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>220</x>

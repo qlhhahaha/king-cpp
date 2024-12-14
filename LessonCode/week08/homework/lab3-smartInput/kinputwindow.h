@@ -1,4 +1,4 @@
-#ifndef __KINPUTWINDOW_H__
+﻿#ifndef __KINPUTWINDOW_H__
 #define __KINPUTWINDOW_H__
 
 #include <QtWidgets/QMainWindow>
@@ -12,26 +12,37 @@
 
 class KInputWindow : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    KInputWindow(QWidget* parent = Q_NULLPTR);
-    ~KInputWindow();
+	KInputWindow(QWidget* parent = Q_NULLPTR);
+	~KInputWindow();
 
-    handsInput inputs;
+
+	void updateRecoResult();
+
+
+	handsInput inputs;
 	std::vector<std::string> inputResult;
 
 protected:
-    void mouseReleaseEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 
 private slots:
-    //void onBtnWordClicked_1();
-    //void onBtnBackClicked();
-    void onClearBtnClicked();
-
+	void onBackBtnClicked();
+	void onClearBtnClicked();
+	void onWordBtnClicked_1();
+	void onWordBtnClicked_2();
+	void onWordBtnClicked_3();
+	void onWordBtnClicked_4();
+	void onWordBtnClicked_5();
+	void onWordBtnClicked_6();
+	void onWordBtnClicked_7();
+	void onWordBtnClicked_8();
+	void onWordBtnClicked_9();
 
 private:
-    Ui::KInputWindowClass ui;
+	Ui::KInputWindowClass ui;
 
 };
 
