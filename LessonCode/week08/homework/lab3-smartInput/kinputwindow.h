@@ -1,4 +1,6 @@
-﻿#ifndef __KINPUTWINDOW_H__
+﻿#pragma once
+
+#ifndef __KINPUTWINDOW_H__
 #define __KINPUTWINDOW_H__
 
 #include <QtWidgets/QMainWindow>
@@ -8,6 +10,7 @@
 #include <QVBoxLayout>
 #include <QPixmap>
 #include "handswriting.h"
+#include "keyboard.h"
 
 
 class KInputWindow : public QMainWindow
@@ -31,6 +34,11 @@ protected:
 private slots:
 	void onBackBtnClicked();
 	void onClearBtnClicked();
+	void onLetterBtnClicked();
+	void onNumberBtnClicked();
+	void onSymbolBtnClicked();
+
+
 	void onWordBtnClicked_1();
 	void onWordBtnClicked_2();
 	void onWordBtnClicked_3();
@@ -43,6 +51,10 @@ private slots:
 
 private:
 	Ui::KInputWindowClass ui;
+	KKeyboard* letterDialog;
+	KKeyboard* numberDialog;
+	KKeyboard* symbolDialog;
+
 
 };
 

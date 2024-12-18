@@ -1,9 +1,14 @@
 ﻿#include "kinputwindow.h"
 
 KInputWindow::KInputWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+    letterDialog(new KKeyboard(this)),
+    numberDialog(new KKeyboard(this)),
+    symbolDialog(new KKeyboard(this))
 {
     ui.setupUi(this);
+    
+
 
     // 初始化图片资源
     QPixmap* pixmap = new QPixmap(":/image/logo.png");
@@ -19,6 +24,11 @@ KInputWindow::KInputWindow(QWidget *parent)
     // 连接各按键的信号
     connect(ui.clearStrokeBtn, &QPushButton::clicked, this, &KInputWindow::onClearBtnClicked);
     connect(ui.backStrokeBtn, &QPushButton::clicked, this, &KInputWindow::onBackBtnClicked);
+    connect(ui.letterBtn, &QPushButton::clicked, this, &KInputWindow::onLetterBtnClicked);
+    connect(ui.numberBtn, &QPushButton::clicked, this, &KInputWindow::onNumberBtnClicked);
+    connect(ui.symbolBtn, &QPushButton::clicked, this, &KInputWindow::onSymbolBtnClicked);
+
+
     connect(ui.guessBtn1, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_1);
     connect(ui.guessBtn2, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_2);
     connect(ui.guessBtn3, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_3);
@@ -28,6 +38,10 @@ KInputWindow::KInputWindow(QWidget *parent)
     connect(ui.guessBtn7, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_7);
     connect(ui.guessBtn8, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_8);
     connect(ui.guessBtn9, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_9);
+
+    letterDialog->hide();
+    numberDialog->hide();
+    symbolDialog->hide();
 }
 
 
@@ -92,6 +106,53 @@ void KInputWindow::onBackBtnClicked() {
         updateRecoResult();
     }
 }
+
+
+void KInputWindow::onLetterBtnClicked() {
+    if (letterDialog->isVisible()) {
+        letterDialog->hide();
+    }
+    else {
+        letterDialog->setup("abc");
+        letterDialog->show();
+    }
+
+    numberDialog->hide();
+    symbolDialog->hide();
+
+}
+
+
+void KInputWindow::onNumberBtnClicked() {
+    if (numberDialog->isVisible()) {
+        numberDialog->hide();
+    }
+    else {
+        numberDialog->setup("123");
+        numberDialog->show();
+    }
+
+
+    letterDialog->hide();
+    symbolDialog->hide();
+
+}
+
+
+void KInputWindow::onSymbolBtnClicked() {
+    if (symbolDialog->isVisible()) {
+        symbolDialog->hide();
+    }
+    else {
+        symbolDialog->setup("#+=");
+        symbolDialog->show();
+    }
+
+
+    letterDialog->hide();
+    numberDialog->hide();
+}
+
 
 void KInputWindow::onWordBtnClicked_1(){
     ui.inputResult->clear();

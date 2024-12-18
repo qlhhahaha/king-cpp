@@ -508,7 +508,7 @@
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <item>
-      <widget class="QPushButton" name="punctuationBtn">
+      <widget class="QPushButton" name="symbolBtn">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
@@ -521,7 +521,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="numBtn">
+      <widget class="QPushButton" name="numberBtn">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
@@ -534,7 +534,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="englishBtn">
+      <widget class="QPushButton" name="letterBtn">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>

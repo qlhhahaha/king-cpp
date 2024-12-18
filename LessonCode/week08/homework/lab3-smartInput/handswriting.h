@@ -1,4 +1,6 @@
-﻿#ifndef __HANDSWRITING_H__
+﻿#pragma once
+
+#ifndef __HANDSWRITING_H__
 #define __HANDSWRITING_H__
 
 #include <Qwidget>
