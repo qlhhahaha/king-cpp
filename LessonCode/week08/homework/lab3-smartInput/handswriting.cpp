@@ -1,5 +1,4 @@
 ﻿#include "handswriting.h"
-#include <QDebug>
 
 handsInput::handsInput(QWidget* parent) : QWidget(parent) {
 
@@ -84,7 +83,6 @@ void handsInput::inputInit(HWND hwnd) {
     if (SUCCEEDED(g_pIInkCollector->get_DefaultDrawingAttributes(&p))) {
         p->put_Color(RGB(255, 0, 0));
     }
-
 
     // 开启墨迹输入
     hr = g_pIInkCollector->put_Enabled(VARIANT_TRUE);

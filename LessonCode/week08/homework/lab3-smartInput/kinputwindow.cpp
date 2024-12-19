@@ -8,8 +8,6 @@ KInputWindow::KInputWindow(QWidget *parent)
 {
     ui.setupUi(this);
     
-
-
     // 初始化图片资源
     QPixmap* pixmap = new QPixmap(":/image/logo.png");
     pixmap->scaled(ui.label->size(), Qt::KeepAspectRatio);
@@ -21,12 +19,16 @@ KInputWindow::KInputWindow(QWidget *parent)
     WId hShow = ui.inputZone->winId();
     this->inputs.inputInit((HWND)hShow);
 
+    IInkCollector* test1 = this->inputs.g_pIInkCollector;
+    settingDialog = new KSettingsDialog(test1, this->ui.candidateGrid, this);
+
     // 连接各按键的信号
     connect(ui.clearStrokeBtn, &QPushButton::clicked, this, &KInputWindow::onClearBtnClicked);
     connect(ui.backStrokeBtn, &QPushButton::clicked, this, &KInputWindow::onBackBtnClicked);
     connect(ui.letterBtn, &QPushButton::clicked, this, &KInputWindow::onLetterBtnClicked);
     connect(ui.numberBtn, &QPushButton::clicked, this, &KInputWindow::onNumberBtnClicked);
     connect(ui.symbolBtn, &QPushButton::clicked, this, &KInputWindow::onSymbolBtnClicked);
+    connect(ui.settingBtn, &QPushButton::clicked, this, &KInputWindow::onSettingBtnClicked);
 
 
     connect(ui.guessBtn1, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_1);
@@ -42,6 +44,8 @@ KInputWindow::KInputWindow(QWidget *parent)
     letterDialog->hide();
     numberDialog->hide();
     symbolDialog->hide();
+
+    settingDialog->hide();
 }
 
 
@@ -151,6 +155,14 @@ void KInputWindow::onSymbolBtnClicked() {
 
     letterDialog->hide();
     numberDialog->hide();
+}
+
+void KInputWindow::onSettingBtnClicked() {
+    if (settingDialog->isVisible())
+        settingDialog->hide();
+    else
+        settingDialog->show();
+
 }
 
 

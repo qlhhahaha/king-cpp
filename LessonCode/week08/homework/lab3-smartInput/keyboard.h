@@ -3,11 +3,7 @@
 #ifndef __KEYBOARD_H__
 #define __KEYBORAD_H__
 
-#include <QDialog>
-#include <QGridLayout>
-#include <QSignalMapper>
-#include <QVector>
-#include <QPushButton>
+#include "common.h"
 
 class KKeyboard : public QDialog {
 	Q_OBJECT

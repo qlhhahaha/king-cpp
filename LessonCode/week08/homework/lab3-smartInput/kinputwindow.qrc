@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>image/settinglogo.png</file>
     <file>image/logo.png</file>
     <file>image/peiqi.png</file>
   </qresource>

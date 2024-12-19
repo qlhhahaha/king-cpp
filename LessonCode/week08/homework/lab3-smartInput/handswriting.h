@@ -3,12 +3,7 @@
 #ifndef __HANDSWRITING_H__
 #define __HANDSWRITING_H__
 
-#include <Qwidget>
-
-#include <msinkaut_i.c>
-#include <msinkaut.h>
-#include <vector>
-#include <string>
+#include "common.h"
 
 #define BACK_STROKE_FAIL 0
 #define BACK_STROKE_SUCCESS 1

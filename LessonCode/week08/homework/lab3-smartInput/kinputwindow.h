@@ -5,12 +5,11 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_kinputwindow.h"
-#include <QLabel>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QPixmap>
+
+#include "common.h"
 #include "handswriting.h"
 #include "keyboard.h"
+#include "setting.h"
 
 
 class KInputWindow : public QMainWindow
@@ -21,9 +20,7 @@ public:
 	KInputWindow(QWidget* parent = Q_NULLPTR);
 	~KInputWindow();
 
-
 	void updateRecoResult();
-
 
 	handsInput inputs;
 	std::vector<std::string> inputResult;
@@ -37,6 +34,7 @@ private slots:
 	void onLetterBtnClicked();
 	void onNumberBtnClicked();
 	void onSymbolBtnClicked();
+	void onSettingBtnClicked();
 
 
 	void onWordBtnClicked_1();
@@ -54,6 +52,8 @@ private:
 	KKeyboard* letterDialog;
 	KKeyboard* numberDialog;
 	KKeyboard* symbolDialog;
+
+	KSettingsDialog* settingDialog;
 
 
 };
