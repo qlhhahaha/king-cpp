@@ -35,7 +35,9 @@ private slots:
 	void onNumberBtnClicked();
 	void onSymbolBtnClicked();
 	void onSettingBtnClicked();
-
+	void onSingleBtnClicked();
+	void onSentenceBtnClicked();
+	
 
 	void onWordBtnClicked_1();
 	void onWordBtnClicked_2();

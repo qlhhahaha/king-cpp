@@ -29,6 +29,8 @@ KInputWindow::KInputWindow(QWidget *parent)
     connect(ui.numberBtn, &QPushButton::clicked, this, &KInputWindow::onNumberBtnClicked);
     connect(ui.symbolBtn, &QPushButton::clicked, this, &KInputWindow::onSymbolBtnClicked);
     connect(ui.settingBtn, &QPushButton::clicked, this, &KInputWindow::onSettingBtnClicked);
+    connect(ui.singleCharBtn, &QPushButton::clicked, this, &KInputWindow::onSingleBtnClicked);
+    connect(ui.sentenceBtn, &QPushButton::clicked, this, &KInputWindow::onSentenceBtnClicked);
 
 
     connect(ui.guessBtn1, &QPushButton::clicked, this, &KInputWindow::onWordBtnClicked_1);
@@ -166,7 +168,75 @@ void KInputWindow::onSettingBtnClicked() {
 }
 
 
+void KInputWindow::onSingleBtnClicked() {
+    ui.singleCharBtn->setStyleSheet(
+        "QPushButton {"
+        "    background-color: rgb(255, 204, 153);"
+        "}"
+    );
+
+    ui.sentenceBtn->setStyleSheet(
+        "QPushButton {"
+        "    background-color: rgb(255, 255, 255);"
+        "}"
+    );
+
+    IInkRecognizerGuide* RecognizerGuide;
+    CoCreateInstance(CLSID_InkRecognizerGuide, NULL, CLSCTX_INPROC_SERVER, IID_IInkRecognizerGuide, (void**)&RecognizerGuide);
+    InkRecoGuide recoguide;
+    RECT rect;
+
+    rect.bottom = 2;//不能为1
+    rect.left = 0;
+    rect.right = 2;//不能为1
+    rect.top = 0;
+
+    recoguide.rectWritingBox = rect;
+    recoguide.rectDrawnBox = rect;
+    recoguide.cRows = 1;//不要过大
+    recoguide.cColumns = 1;
+    recoguide.midline = -1;
+    RecognizerGuide->put_GuideData(recoguide);
+    inputs.g_pIInkRecoContext->putref_Guide(RecognizerGuide);
+
+}
+
+
+void KInputWindow::onSentenceBtnClicked() {
+    ui.singleCharBtn->setStyleSheet(
+        "QPushButton {"
+        "    background-color: rgb(255, 255, 255);"
+        "}"
+    );
+
+    ui.sentenceBtn->setStyleSheet(
+        "QPushButton {"
+        "    background-color: rgb(255, 204, 153);"
+        "}"
+    );
+
+    // InkRecoGuide中的值全设为0时是默认模式，支持长句书写
+    IInkRecognizerGuide* RecognizerGuide;
+    CoCreateInstance(CLSID_InkRecognizerGuide, NULL, CLSCTX_INPROC_SERVER, IID_IInkRecognizerGuide, (void**)&RecognizerGuide);
+    InkRecoGuide recoguide;
+    RECT rect;
+    rect.bottom = 0;
+    rect.left = 0;
+    rect.right = 0;
+    rect.top = 0;
+
+    recoguide.rectWritingBox = rect;
+    recoguide.rectDrawnBox = rect;
+    recoguide.cRows = 0;
+    recoguide.cColumns = 0;
+    recoguide.midline = 0;
+    RecognizerGuide->put_GuideData(recoguide);
+    inputs.g_pIInkRecoContext->putref_Guide(RecognizerGuide);
+}
+
+
 void KInputWindow::onWordBtnClicked_1(){
+
     ui.inputResult->clear();
     ui.inputResult->setText(ui.guessBtn1->text());
 }

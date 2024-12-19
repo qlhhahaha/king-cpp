@@ -91,11 +91,30 @@ void handsInput::inputInit(HWND hwnd) {
         return;
     }
 
+    //设置手写只识别为一个字
+    IInkRecognizerGuide* RecognizerGuide;
+    hr = CoCreateInstance(CLSID_InkRecognizerGuide, NULL, CLSCTX_INPROC_SERVER, IID_IInkRecognizerGuide, (void**)&RecognizerGuide);
+    if (FAILED(hr))
+        return;
+    InkRecoGuide recoguide;
+    RECT rect;
+
+    rect.bottom = 2;//不能为1
+    rect.left = 0;
+    rect.right = 2;//不能为1
+    rect.top = 0;
+
+    recoguide.rectWritingBox = rect;
+    recoguide.rectDrawnBox = rect;
+    recoguide.cRows = 1;//不要过大
+    recoguide.cColumns = 1;
+    recoguide.midline = -1;
+    RecognizerGuide->put_GuideData(recoguide);
+    g_pIInkRecoContext->putref_Guide(RecognizerGuide);
 
     VARIANT_BOOL autoRedraw = VARIANT_TRUE;
     hr = g_pIInkCollector->put_AutoRedraw(autoRedraw);
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)) {
         qDebug() << "设置自动重绘墨迹失败";
         g_pIInkCollector->Release();
         CoUninitialize();
