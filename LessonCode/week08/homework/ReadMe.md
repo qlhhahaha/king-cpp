@@ -2,53 +2,53 @@
 
 #### 一、 项目设计方案
 
-1. **单字识别**
+**单字识别**
 
-   在handswriting类中基于windows tablet pc sdk设置public成员变量g_pIInkCollector、g_pIInkDisp、g_pIInkRecoContext，类构造函数中对其初始化，开启墨迹输入；
+在handswriting类中基于windows tablet pc sdk设置public成员变量g_pIInkCollector、g_pIInkDisp、g_pIInkRecoContext，类构造函数中对其初始化，开启墨迹输入；
 
-   mouseReleaseEvent()事件中进行墨迹识别，将在指定书写区域内采集到的笔触收集器内容传递给识别器g_pIInkRecoContext，利用其Recognize()方法得到数个最佳匹配结果，输出前九个
-
-
-
-2. **笔画撤销**
-
-   在handswriting类中设置私有成员变量std::vector<IInkStrokeDisp*> strokeRecord，用于**存储单根笔画**，每次调用recognize()进行墨迹识别时，就把当前写的这根笔画push_back进去。点击撤销按钮时进行判断，如果当前为空（屏幕中没有墨迹）就什么都不做；只剩一根墨迹时就直接调用屏幕重写clearStrokes()函数进行清空（包括候选词区域）；墨迹大于一根则重新识别以及匹配中文联想词
+mouseReleaseEvent()事件中进行墨迹识别，将在指定书写区域内采集到的笔触收集器内容传递给识别器g_pIInkRecoContext，利用其Recognize()方法得到数个最佳匹配结果，输出前九个
 
 
 
-3. **小键盘**
+**笔画撤销**
 
-   分别采用三个QDialog + QLayout来绘制英文、数字、标点符号键盘，使用**QSignalMapper**对小键盘上各个pushbutton的信号槽进行统一映射，即点击键盘时都是输出对应pushbutton上的文字
-
-   
-
-4. **设置功能**
-
-   同样采用QDialog绘制设置界面，用QComboBox绘制笔迹颜色和候选词大小选择、QSlider绘制笔迹粗细滑动条、用IInkDrawingAttributes和IInkCollector类实现颜色更改、用QGridLayout的itemAt方法来统一更改候选词大小
+在handswriting类中设置私有成员变量std::vector<IInkStrokeDisp*> strokeRecord，用于**存储单根笔画**，每次调用recognize()进行墨迹识别时，就把当前写的这根笔画push_back进去。点击撤销按钮时进行判断，如果当前为空（屏幕中没有墨迹）就什么都不做；只剩一根墨迹时就直接调用屏幕重写clearStrokes()函数进行清空（包括候选词区域）；墨迹大于一根则重新识别以及匹配中文联想词
 
 
 
-5. **区分单字手写和长句手写**
+**小键盘**
 
-   长句书写本身不用额外设计，tablet pc的g_pIInkRecoContext默认开启长句书写；反倒是单字手写需要额外设置，方案是RecognizerGuide->put_GuideData(recoguide);和g_pIInkRecoContext->putref_Guide(RecognizerGuide);其中要把recoguide的cRows和cColumns设为1、midline设为-1、rectWritingBox的bottom和right设为2，从而**将手写识别范围限制在第一个字的外包矩形中**；将上述参数设为0时则又恢复默认的长句书写
-
-   此外使用QSS设置单字手写和长句手写的高亮，从而直观区分两种状态
+分别采用三个QDialog + QLayout来绘制英文、数字、标点符号键盘，使用**QSignalMapper**对小键盘上各个pushbutton的信号槽进行统一映射，即点击键盘时都是输出对应pushbutton上的文字
 
 
 
-6. **中文联想**
+**设置功能**
 
-   思路来源：[How to Write a Spelling Corrector](https://norvig.com/spell-correct.html)
+同样采用QDialog绘制设置界面，用QComboBox绘制笔迹颜色和候选词大小选择、QSlider绘制笔迹粗细滑动条、用IInkDrawingAttributes和IInkCollector类实现颜色更改、用QGridLayout的itemAt方法来统一更改候选词大小
 
-   采用基于**贝叶斯概率的自适应方法**实现中文词组联想，所谓贝叶斯概率简而言之就是在已知事件B发生时计算后验事件A的概率
-   $$
-   P(A|B)=\frac{P(B|A)P(A)}{P(B)}
-   $$
-   对应到输入法中，假设P(B)代表用户输入”上“的概率，P(A|B)代表已经输入”上“后、继续输入”上班“的概率，由公式可知，P(B)未知、无法改进；P(B|A)表示输入”上班“的情况下输入"上"的概率，这是必然的，概率值为1；那么可供进行联想计算的只有P(A)，即用户想输入”上班“二字的概率（以链接文章为例，其中提到所有英文文本里有7%的内容为单词”the“，所以认为P(the)=0.07）。
 
-   经过简单分析后，我们可以从贝叶斯概率中推出一种非常符合直觉的方案：设计一张不含单字、仅含词语（二三四字皆可）的表，该表有多行，每一行包含一个词语和一个数字（表示该词语出现的频次），代码中用unordered_map来存储这张表，其中key为词语，value为一个包含了频次和词语首个字的struct。在输入法识别出字体后，将该字体作为输入在unordered_map中查询、取出、排序，取频次最高（代表P(A)最高）的数个查询结果作为联想的输出；
 
-   另外自适应的含义是，在数个联想结果中，无论用户选择哪一个，都将该词语的频次+1，从而能使得符合用户习惯的词语在下一次联想时更有可能被优先展示
+**区分单字手写和长句手写**
+
+长句书写本身不用额外设计，tablet pc的g_pIInkRecoContext默认开启长句书写；反倒是单字手写需要额外设置，方案是RecognizerGuide->put_GuideData(recoguide);和g_pIInkRecoContext->putref_Guide(RecognizerGuide);其中要把recoguide的cRows和cColumns设为1、midline设为-1、rectWritingBox的bottom和right设为2，从而**将手写识别范围限制在第一个字的外包矩形中**；将上述参数设为0时则又恢复默认的长句书写
+
+此外使用QSS设置单字手写和长句手写的高亮，从而直观区分两种状态
+
+
+
+**中文联想**
+
+思路来源：[How to Write a Spelling Corrector](https://norvig.com/spell-correct.html)
+
+采用基于**贝叶斯概率的自适应方法**实现中文词组联想，所谓贝叶斯概率简而言之就是在已知事件B发生时计算后验事件A的概率
+$$
+P(A|B)=\frac{P(B|A)P(A)}{P(B)}
+$$
+对应到输入法中，假设P(B)代表用户输入”上“的概率，P(A|B)代表已经输入”上“后、继续输入”上班“的概率，由公式可知，P(B)未知、无法改进；P(B|A)表示输入”上班“的情况下输入"上"的概率，这是必然的，概率值为1；那么可供进行联想计算的只有P(A)，即用户想输入”上班“二字的概率（以链接文章为例，其中提到所有英文文本里有7%的内容为单词”the“，所以认为P(the)=0.07）。
+
+经过简单分析后，我们可以从贝叶斯概率中推出一种非常符合直觉的方案：设计一张不含单字、仅含词语（二三四字皆可）的表，该表有多行，每一行包含一个词语和一个数字（表示该词语出现的频次），代码中用unordered_map来存储这张表，其中key为词语，value为一个包含了频次和词语首个字的struct。在输入法识别出字体后，将该字体作为输入在unordered_map中查询、取出、排序，取频次最高（代表P(A)最高）的数个查询结果作为联想的输出；
+
+另外自适应的含义是，在数个联想结果中，无论用户选择哪一个，都将该词语的频次+1，从而能使得符合用户习惯的词语在下一次联想时更有可能被优先展示
 
 
 
