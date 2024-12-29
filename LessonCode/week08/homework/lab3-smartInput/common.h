@@ -8,7 +8,16 @@
 
 #include <vector>
 #include <string>
+#include <stdio.h>
+#include <tchar.h>
+#include <iostream>
+#include <fstream>
+#include <unordered_map>
+#include <algorithm>
+#include <locale>
+#include <codecvt>
 
+#include <QTextCodec>
 #include <Qwidget>
 #include <QDialog>
 #include <QGridLayout>
@@ -16,6 +25,7 @@
 #include <QVector>
 #include <QPushButton>
 #include <QLabel>
+#include <QLineEdit>
 #include <QVBoxLayout>
 #include <QPixmap>
 #include <QComboBox>

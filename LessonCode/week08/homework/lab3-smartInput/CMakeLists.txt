@@ -1,8 +1,6 @@
-﻿cmake_minimum_required(VERSION 3.10)  #cmake�汾���3.10
+﻿cmake_minimum_required(VERSION 3.10)  
 
-# ��ȡ��ǰ��CMake�ļ�����Ŀ¼������·�� 
 get_filename_component(CURRENT_DIR_PATH "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE) 
-# ������·������ȡĿ¼���� 
 get_filename_component(CURRENT_DIR_NAME "${CURRENT_DIR_PATH}" NAME) 
 project(${CURRENT_DIR_NAME})
 

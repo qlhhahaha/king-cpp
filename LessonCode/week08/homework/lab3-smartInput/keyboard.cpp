@@ -1,11 +1,12 @@
 ﻿#include "keyboard.h"
 
 
-KKeyboard::KKeyboard(QWidget* parent)
-	: QDialog(parent),
+KKeyboard::KKeyboard(QLineEdit* parentEdit, QWidget* parent)
+	: keyboardEdit(parentEdit),
+	QDialog(parent),
 	letterMapper(new QSignalMapper(this)),
 	numberMapper(new QSignalMapper(this)),
-	symbolMapper(new QSignalMapper(this)) 
+	symbolMapper(new QSignalMapper(this))
 {
 	keyboardLayout = new QGridLayout(this);
 
@@ -77,6 +78,13 @@ KKeyboard::KKeyboard(QWidget* parent)
 }
 
 
+KKeyboard::~KKeyboard() {
+	delete letterMapper;
+	delete numberMapper;
+	delete symbolMapper;
+	delete keyboardLayout;
+}
+
 void KKeyboard::setup(const QString& keyboardType) {
 	// 清除之前的布局
 	QLayoutItem* child;
@@ -134,24 +142,20 @@ void KKeyboard::setup(const QString& keyboardType) {
 		}
 		connect(symbolMapper, SIGNAL(mapped(const QString&)), this, SLOT(onSingleSymbolBtnClicked(const QString&)));
 	}
-
 }
 
 
 
 void KKeyboard::onSingleLetterBtnClicked(const QString& letter) {
-
-
-
+	keyboardEdit->insert(letter);
 }
 
 
 void KKeyboard::onSingleNumberBtnClicked(const QString& number) {
-
+	keyboardEdit->insert(number);
 }
 
 
 void KKeyboard::onSingleSymbolBtnClicked(const QString& symbol) {
-
-
+	keyboardEdit->insert(symbol);
 }

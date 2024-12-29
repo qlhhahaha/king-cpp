@@ -9,6 +9,7 @@ class KSettingsDialog : public QDialog {
     Q_OBJECT
 public:
     explicit KSettingsDialog(IInkCollector* parentInkCollector, QGridLayout* parentGrid, QWidget* parent = nullptr);
+    ~KSettingsDialog();
 
 private slots:
     void onColorSelected(int index);

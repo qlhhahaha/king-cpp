@@ -9,6 +9,13 @@ KSettingsDialog::KSettingsDialog(IInkCollector* parentInkCollector, QGridLayout*
 }
 
 
+KSettingsDialog::~KSettingsDialog() {
+    delete colorComboBox;
+    delete thicknessSlider;
+    delete sizeComboBox;
+    delete resetButton;
+}
+
 void KSettingsDialog::setupUI() {
     setWindowTitle(QString::fromLocal8Bit("设置"));
 
@@ -64,7 +71,6 @@ void KSettingsDialog::setupUI() {
 
 
     layout->addWidget(resetButton);
-
 }
 
 

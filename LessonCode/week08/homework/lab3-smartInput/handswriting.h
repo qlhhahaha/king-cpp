@@ -28,9 +28,6 @@ public:
 	void recognize(std::vector<std::string>& inputResult, bool isRecord);
 	void clearStrokes();
 	int backStrokes();
-
-private:
-
 };
 
 

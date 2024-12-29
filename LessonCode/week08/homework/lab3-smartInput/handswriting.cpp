@@ -120,7 +120,6 @@ void handsInput::inputInit(HWND hwnd) {
         CoUninitialize();
         return;
     }
-
 }
 
 
@@ -227,5 +226,4 @@ void handsInput::clearStrokes() {
 		qDebug() << "清除笔触失败";
 		return;
 	}
-
 }
