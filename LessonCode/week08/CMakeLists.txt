@@ -1,1 +1,0 @@
-add_subdirectory(homework/lab3-smartInput)
