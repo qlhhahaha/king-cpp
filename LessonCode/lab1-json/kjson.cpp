@@ -166,6 +166,7 @@ KJson* parserJson(std::stringstream& srcStream) {
 	return itemJson;
 }
 
+
 KJson* parserArray(std::stringstream& srcStream) {
 	KJson* itemArray = new KJsonArray;
 	if (itemArray == nullptr) {
@@ -200,6 +201,7 @@ std::shared_ptr<KJson> parserAll(std::string path) {
 		std::cerr << "fail to open " << path << std::endl;
 		return nullptr;
 	}
+
 	jsonStream << fin.rdbuf();
 	fin.close();
 
@@ -293,8 +295,7 @@ std::ostream& printArray(std::ostream& os, KJson* srcJson) {
 
 
 std::ostream& operator << (std::ostream& os, KJson* srcJson) {
-	switch (srcJson->returnType())
-	{
+	switch (srcJson->returnType()) {
 	case KJson::JsonString:
 		return printString(os, srcJson);
 		break;

@@ -34,7 +34,7 @@ void dynamicTest() {
 void interact() {
 	// TODO 异常输入防御性检查
 	std::shared_ptr<KJson>ptrJson = parserAll("D:/lab_work_qlh/king/lab-git-push/qianlihui/LessonCode/week01/homework/tests/test.json");
-	std::wcout << L"打印整个json：" << std::endl;
+	std::wcout << L"打印整个json:" << std::endl;
 	std::cout << ptrJson << std::endl << std::endl;
 
 	while (1) {
@@ -64,6 +64,7 @@ void interact() {
 				std::vector<std::string> words = split(inputStr, ' ');
 				std::vector<KJson*> nest(words.size(), nullptr);
 				nest[0] = (*ptrJson)[words[0]];
+
 				for (int i = 1; i < nest.size(); i++) {
 					if (isAllDigits(words[i])) {
 						int numIndex = std::stoi(words[i]);
@@ -98,7 +99,7 @@ void interact() {
 			}
 			std::cout << nest.back() << std::endl;
 
-			std::wcout << L"再键入key和value，程序将其添加到尾部" << std::endl;
+			std::wcout << L"再键入key和value, 程序将其添加到尾部" << std::endl;
 			std::getline(std::cin, inputStr);
 			std::vector<std::string> insertWords = split(inputStr, ' ');
 
@@ -130,7 +131,7 @@ void interact() {
 				}
 			}
 			std::cout << nest.back() << std::endl;
-			std::wcout << L"再键入index或keyname(空格隔开)，程序将删除对应的value" << std::endl;
+			std::wcout << L"再键入index或keyname(空格隔开),程序将删除对应的value" << std::endl;
 			std::cin >> inputStr;
 			if (isAllDigits(inputStr)) {
 				int indexNum = std::stoi(inputStr);
@@ -165,7 +166,7 @@ void interact() {
 
 		else if (funNum == 5) {
 			outputXml(ptrJson);
-			std::wcout << L"已成功转化为xml序列化格式，并输出到tests/output.xml中！" << std::endl << std::endl;
+			std::wcout << L"已成功转化为xml序列化格式,并输出到tests/output.xml中!" << std::endl << std::endl;
 		}
 
 		else if (funNum == 6) {

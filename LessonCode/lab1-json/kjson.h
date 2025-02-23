@@ -81,7 +81,7 @@ public:
 			this->next = nextToDelete->next;
 
 			// 注意：这个delete蕴含了递归，最终逻辑和freeJson()一样
-			delete nextToDelete;  
+			delete nextToDelete;
 		}
 
 		// 再处理子节点
@@ -210,10 +210,13 @@ public:
 	KJsonJson() : KJson(JsonJson) {}
 	~KJsonJson() {}
 
+
 	KJson* operator [] (std::string keyName) override {
 		KJson* child = this->returnChild();
+
 		while (keyName != child->returnKey() && child != nullptr)
 			child = child->returnNext();
+
 		if (child == nullptr) {
 			ptrError->throwException(wrongKeyname);
 			return ptrError;
@@ -221,6 +224,7 @@ public:
 
 		return child;
 	}
+
 
 	KJson* pushBack(KJson* newItem) override {
 		KJson* child = this->returnChild();
@@ -234,6 +238,7 @@ public:
 
 		return child;
 	}
+
 
 	void remove(std::string keyName) override {
 		KJson* removeItem = (*this)[keyName];
@@ -331,7 +336,7 @@ class KJsonError : public KJson {
 public:
 
 	KJsonError() : KJson(JsonError) {};
-	~KJsonError();
+	~KJsonError() {};
 
 	void throwException(errorType type) override {
 		switch (type) {

@@ -10,6 +10,7 @@ void KSearch::loadDataset() {
 	// 打开文件
 	HANDLE fd = CreateFile(this->datasetPath.c_str(), GENERIC_READ,
 		FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
 	if (fd == INVALID_HANDLE_VALUE)
 		throw std::runtime_error("fail to open dataset.xml");
 
@@ -155,9 +156,67 @@ void KSearch::linearSearch(int threadID, const std::string& keyword) {
 }
 
 
-void KSearch::KMP(const std::string& keyword) {
+// 计算部分匹配表（Next数组）
+std::vector<int> KSearch::computeLPSArray(const std::string& pattern) {
+	int m = pattern.length();
+	std::vector<int> lps(m, 0);
+	int len = 0;
+	int i = 1;
+	lps[0] = 0;
 
+	while (i < m) {
+		if (pattern[i] == pattern[len]) {
+			len++;
+			lps[i] = len;
+			i++;
+		}
+		else {
+			if (len != 0) {
+				len = lps[len - 1];
+			}
+			else {
+				lps[i] = 0;
+				i++;
+			}
+		}
+	}
+	return lps;
 }
+
+
+void KSearch::KMP(const std::string& keyword) {
+	int n = keyword.length();
+	std::vector<int> lps = computeLPSArray(keyword);
+
+	for (int threadID = 0; threadID < chunks.size(); ++threadID) {
+		const std::string& text = chunks[threadID];
+		int m = text.length();
+		int i = 0; // 文本的索引
+		int j = 0; // 模式串的索引
+		while (i < m) {
+			if (keyword[j] == text[i]) {
+				j++;
+				i++;
+			}
+
+			if (j == n) {
+				// 找到匹配
+				this->keywordCountMul[keyword][threadID]++;
+				this->keywordPosMul[keyword][threadID].push_back(i - j);
+				j = lps[j - 1];
+			}
+			else if (i < m && keyword[j] != text[i]) {
+				if (j != 0) {
+					j = lps[j - 1];
+				}
+				else {
+					i++;
+				}
+			}
+		}
+	}
+}
+
 
 void KSearch::boundarySearch(const std::string& keyword) {
 	std::string boundary, tmpStr;

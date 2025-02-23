@@ -46,7 +46,7 @@ private:
 	std::unordered_map<std::string, int> keywordCount;
 	std::unordered_map<std::string, std::vector<int>> keywordCountMul;
 
-
+	std::vector<int> KSearch::computeLPSArray(const std::string& pattern);
 	void KMP(const std::string& keyword);
 	void linearSearch(int threadID, const std::string& keyword);
 	void readFileChunk(HANDLE fd, HANDLE mapFile, char* pBuffer, long long start, long long length, int threadID);
